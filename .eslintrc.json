@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/eslintrc",
+  "root": true,
+  "ignorePatterns": [
+    "packages/**/dist/**/*",
+    "packages/**/*.spec.ts"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "extends": [
+        "@sunkit/eslint-config"
+      ],
+      "rules": {}
+    }
+  ]
+}
