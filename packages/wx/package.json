@@ -1,0 +1,49 @@
+{
+  "name": "@opper/wx",
+  "version": "0.0.0",
+  "description": "Opper SDK for JavaScript/TypeScript.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "author": "opper",
+  "license": "MIT",
+  "sideEffects": false,
+  "files": [
+    "src",
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "require": "./index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opper-devkit/opper-js-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/opper-devkit/opper-js-sdk/issues"
+  },
+  "homepage": "https://github.com/opper-devkit/opper-js-sdk",
+  "keywords": [
+    "opper",
+    "opper-sdk"
+  ],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "miniprogram-api-typings": "^3.10.0"
+  },
+  "peerDependencies": {
+    "miniprogram-api-typings": "^3.10.0",
+    "rxjs": "^7.0.0"
+  }
+}

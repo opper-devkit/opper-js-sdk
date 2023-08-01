@@ -1,0 +1,28 @@
+{
+  "include": [
+    "./packages"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*.spec.ts"
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "strict": true,
+    "target": "es2017",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "preserveConstEnums": true,
+    "paths": {
+      "@opper/*": [
+        "packages/*"
+      ]
+    }
+  }
+}
