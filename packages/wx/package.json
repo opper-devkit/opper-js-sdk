@@ -2,9 +2,9 @@
   "name": "@opper/wx",
   "version": "0.0.0",
   "description": "Opper SDK for JavaScript/TypeScript.",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "author": "opper",
   "license": "MIT",
   "sideEffects": false,
@@ -14,9 +14,9 @@
   ],
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./index.mjs",
-      "require": "./index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -39,11 +39,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {
-    "miniprogram-api-typings": "^3.10.0"
+  "dependencies": {
+    "@ngify/types": "^1.5.2"
   },
   "peerDependencies": {
+    "@opper/core": "0.0.0",
     "miniprogram-api-typings": "^3.10.0",
-    "rxjs": "^7.0.0"
+    "rxjs": "^7.8.1"
   }
 }
