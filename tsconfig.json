@@ -12,6 +12,9 @@
     "baseUrl": ".",
     "rootDir": ".",
     "strict": true,
+    "lib": [
+      "es2022"
+    ],
     "target": "es2017",
     "module": "esnext",
     "moduleResolution": "node",
