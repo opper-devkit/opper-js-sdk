@@ -1,17 +1,29 @@
 import { PickProperty } from '@ngify/types';
-import { Observable, concatAll, from } from 'rxjs';
-import { splitArray } from './utils';
+import { Observable, concatAll, filter, from, map, shareReplay, switchMap, take } from 'rxjs';
+import { arrayBufferToHex, hexToAscii, splitArray } from './utils';
+import { BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from './uuids';
+
+// 空白字符（HEX: 00）
+// eslint-disable-next-line no-control-regex
+const EMPTY_HEX_REGEX = /\x00/g;
 
 export abstract class AbstractBluetoothLowEnergeDevice {
   abstract readonly characteristicValueChange: Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>
   abstract readonly connectionStateChange: Observable<WechatMiniprogram.OnBLEConnectionStateChangeListenerResult>
 
-  abstract readonly modelNumber: Observable<string>
-  abstract readonly serialNumber: Observable<string>
-  abstract readonly firmwareRevision: Observable<string>
-  abstract readonly hardwareRevision: Observable<string>
-  abstract readonly softwareRevision: Observable<string>
-  abstract readonly manufacturerName: Observable<string>
+  /** 产品型号 */
+  readonly modelNumber = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ModelNumber);
+  /** 产品序列号 */
+  readonly serialNumber = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.SerialNumber);
+  /** 固件版本 */
+  readonly firmwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.FirmwareRevision);
+  /** 硬件版本 */
+  readonly hardwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.HardwareRevision);
+  /** 软件版本 */
+  readonly softwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.SoftwareRevision);
+  /** 生产商名称 */
+  readonly manufacturerName = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ManufacturerName);
+
   abstract readonly services: Observable<WechatMiniprogram.BLEService[]>
 
   protected mtu: number = 23;
@@ -40,6 +52,24 @@ export abstract class AbstractBluetoothLowEnergeDevice {
   abstract getMtu(): Observable<WechatMiniprogram.GetBLEMTUSuccessCallbackResult>
   abstract notifyCharacteristicValueChange(options: Omit<WechatMiniprogram.NotifyBLECharacteristicValueChangeOption, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
   abstract writeCharacteristicValue(options: Omit<PickProperty<WechatMiniprogram.WriteBLECharacteristicValueOption>, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
+
+  private deviceInfoOf(uuid: BlueToothDeviceInfoCharacteristicUUIDs) {
+    return this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID }).pipe(
+      switchMap(() => this.readCharacteristicValue({
+        serviceId: DEVICE_INFO_SERVICE_UUID,
+        characteristicId: uuid
+      })),
+      switchMap(() => this.characteristicValueChange),
+      filter(o => o.serviceId === DEVICE_INFO_SERVICE_UUID && o.characteristicId === uuid),
+      map(({ value }) => {
+        const hex = arrayBufferToHex(value);
+        const ascii = hexToAscii(hex);
+        return ascii.replace(EMPTY_HEX_REGEX, '');
+      }),
+      take(1),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
+  }
 
   /**
    * 向 BLE 特征值中写入二进制数据，支持分批发送。

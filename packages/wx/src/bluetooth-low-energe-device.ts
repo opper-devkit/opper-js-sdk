@@ -1,10 +1,6 @@
 import { PickProperty } from '@ngify/types';
-import { AbstractBluetoothLowEnergeDevice, BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID, arrayBufferToHex, hexToAscii } from '@opper/core';
-import { Observable, defer, filter, map, share, shareReplay, switchMap, take, tap } from 'rxjs';
-
-// 空白字符（HEX: 00）
-// eslint-disable-next-line no-control-regex
-const EMPTY_HEX_REGEX = /\x00/g;
+import { AbstractBluetoothLowEnergeDevice } from '@opper/core';
+import { Observable, defer, filter, map, share, shareReplay, tap } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   readonly characteristicValueChange = new Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>(observer => {
@@ -28,19 +24,6 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     share()
   );
 
-  /** 产品型号 */
-  readonly modelNumber = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ModelNumber);
-  /** 产品序列号 */
-  readonly serialNumber = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.SerialNumber);
-  /** 固件版本 */
-  readonly firmwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.FirmwareRevision);
-  /** 硬件版本 */
-  readonly hardwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.HardwareRevision);
-  /** 软件版本 */
-  readonly softwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.SoftwareRevision);
-  /** 生产商名称 */
-  readonly manufacturerName = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ManufacturerName);
-
   /**
    * 获取已连接设备的服务
    */
@@ -53,24 +36,6 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
 
   constructor(id: string) {
     super(id);
-  }
-
-  private deviceInfoOf(uuid: BlueToothDeviceInfoCharacteristicUUIDs) {
-    return this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID }).pipe(
-      switchMap(() => this.readCharacteristicValue({
-        serviceId: DEVICE_INFO_SERVICE_UUID,
-        characteristicId: uuid
-      })),
-      switchMap(() => this.characteristicValueChange),
-      filter(o => o.serviceId === DEVICE_INFO_SERVICE_UUID && o.characteristicId === uuid),
-      map(({ value }) => {
-        const hex = arrayBufferToHex(value);
-        const ascii = hexToAscii(hex);
-        return ascii.replace(EMPTY_HEX_REGEX, '');
-      }),
-      take(1),
-      shareReplay({ bufferSize: 1, refCount: true })
-    );
   }
 
   private reset() {
