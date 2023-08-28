@@ -1,15 +1,13 @@
-import { Observable, Subject, TimeoutError, bufferCount, catchError, defer, filter, from, map, merge, of, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, throwError, timeout } from 'rxjs';
+import { Subject, TimeoutError, catchError, defer, filter, from, map, merge, of, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, throwError, timeout } from 'rxjs';
 import { Attribute } from './attribute';
 import { config } from './config';
 import { AbstractBluetoothLowEnergeDevice } from './device';
-import { AttributeCommand } from './interface';
+import { AttributeCommandParser, DefaultAttributeCommandParser } from './parser';
 import { ATTRIBUTE_COMMAND_DELIMITER, arrayBufferToHex, createAttributeCommand, hexToAscii, parseAttributeCommand, stringToUint8Array, verifyAttributeCommand } from './utils';
 import { ADVERTIS_SERVICE_UUID, NOTIFY_CHARACTERISTIC_UUID, WRITE_CHARACTERISTIC_UUID } from './uuids';
 
 export class Opper {
-  private destroy$: Subject<void> = new Subject();
-
-  private parser: AttributeCommandParser = new DefaultAttributeCommandParser(); // TODO
+  private readonly destroy$: Subject<void> = new Subject();
 
   private readonly attributeCommandChange = defer(() => this.device.characteristicValueChange).pipe(
     filter(o => o.serviceId === ADVERTIS_SERVICE_UUID && o.characteristicId === NOTIFY_CHARACTERISTIC_UUID),
@@ -110,8 +108,15 @@ export class Opper {
     share()
   );
 
-  constructor(public readonly device: AbstractBluetoothLowEnergeDevice) {
+  constructor(
+    public readonly device: AbstractBluetoothLowEnergeDevice,
+    private parser: AttributeCommandParser = new DefaultAttributeCommandParser()
+  ) {
     this.device = device;
+  }
+
+  setParser(parser: AttributeCommandParser) {
+    this.parser = parser;
   }
 
   check() {
@@ -255,52 +260,6 @@ export class Opper {
 
   disconnect() {
     return this.device.disconnect();
-  }
-
-}
-
-export interface AttributeCommandParser {
-  readonly id: number;
-  readonly name: string;
-  weight(source: Observable<AttributeCommand>): Observable<number>;
-  stableWeight(source: Observable<AttributeCommand>): Observable<number>;
-  unstableWeight(source: Observable<AttributeCommand>): Observable<number>;
-  overload(source: Observable<AttributeCommand>): Observable<boolean>;
-}
-
-export class DefaultAttributeCommandParser implements AttributeCommandParser {
-  readonly id = 1;
-  readonly name = 'default';
-
-  weight(source: Observable<AttributeCommand>): Observable<number> {
-    return source.pipe(
-      map(cmd => +cmd.value[0]),
-      filter(o => typeof o === 'number')
-    );
-  }
-
-  stableWeight(source: Observable<AttributeCommand>): Observable<number> {
-    return source.pipe(
-      bufferCount(3, 1),
-      filter(buf => buf.every(cmd => cmd.value[2] === '1')),
-      map(buf => buf.at(-1)!), // 取出最后一个
-      source => this.weight(source)
-    );
-  }
-
-  unstableWeight(source: Observable<AttributeCommand>): Observable<number> {
-    return source.pipe(
-      bufferCount(3, 1),
-      filter(buf => buf.every(cmd => cmd.value[2] === '0')),
-      map(buf => buf.at(-1)!), // 取出最后一个
-      source => this.weight(source)
-    );
-  }
-
-  overload(source: Observable<AttributeCommand>): Observable<boolean> {
-    return source.pipe(
-      map(() => false) // TODO
-    );
   }
 
 }
