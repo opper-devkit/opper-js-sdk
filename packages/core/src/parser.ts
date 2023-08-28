@@ -3,7 +3,6 @@ import { AttributeCommand } from './interface';
 
 export interface AttributeCommandParser {
   readonly id: number;
-  readonly name: string;
   weight(source: Observable<AttributeCommand>): Observable<number>;
   stableWeight(source: Observable<AttributeCommand>): Observable<number>;
   unstableWeight(source: Observable<AttributeCommand>): Observable<number>;
@@ -12,7 +11,6 @@ export interface AttributeCommandParser {
 
 export class DefaultAttributeCommandParser implements AttributeCommandParser {
   readonly id = 1;
-  readonly name = 'default';
 
   weight(source: Observable<AttributeCommand>): Observable<number> {
     return source.pipe(
