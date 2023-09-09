@@ -34,10 +34,6 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     shareReplay({ bufferSize: 1, refCount: true })
   );
 
-  constructor(id: string) {
-    super(id);
-  }
-
   private reset() {
     this.mtu = 23;
   }
