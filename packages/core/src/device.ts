@@ -28,16 +28,9 @@ export abstract class AbstractBluetoothLowEnergeDevice {
 
   protected mtu: number = 23;
 
-  protected set id(value) {
-    this._id = value;
-  }
-
-  get id() {
-    return this._id;
-  }
-
   constructor(
-    private _id: string
+    protected id: string,
+    protected name?: string,
   ) { }
 
   abstract connect(options?: Omit<PickProperty<WechatMiniprogram.CreateBLEConnectionOption>, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
