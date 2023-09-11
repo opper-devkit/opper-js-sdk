@@ -101,10 +101,10 @@ export function hexToAscii(hex: string) {
  * @returns 函数“splitArray”返回一个数组的数组。每个内部数组都包含原始数组“arr”的一部分，其长度由“length”参数指定。
  */
 export function splitArray<T extends SafeAny[]>(arr: T, length: number) {
-  const tmp = [] as unknown as T;
+  const tmp = [] as T[];
 
   while (arr.length) {
-    tmp.push(arr.slice(0, length));
+    tmp.push(arr.slice(0, length) as T);
     arr = arr.slice(length) as T;
   }
 
