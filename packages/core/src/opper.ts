@@ -234,6 +234,7 @@ export class Opper {
             next: res => console.log('setMTU', res),
             error: res => console.error('setMTU', res),
           }),
+          catchError(() => of(null)), // 仅部分安卓支持 setMTU，所以这里失败也没关系
           switchMap(() => this.device.notifyCharacteristicValueChange({
             state: true,
             serviceId: ADVERTIS_SERVICE_UUID,
