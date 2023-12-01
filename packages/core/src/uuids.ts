@@ -1,3 +1,5 @@
+/** 通用访问服务 */
+export const GENERIC_ACCESS_SERVICE_UUID = '00001800-0000-1000-8000-00805F9B34FB';
 /** 设备信息服务 */
 export const DEVICE_INFO_SERVICE_UUID = '0000180A-0000-1000-8000-00805F9B34FB';
 
@@ -7,6 +9,11 @@ export const ADVERTIS_SERVICE_UUID = '0000FFE0-0000-1000-8000-00805F9B34FB';
 export const WRITE_CHARACTERISTIC_UUID = '0000FFE3-0000-1000-8000-00805F9B34FB';
 /** 通知特征 */
 export const NOTIFY_CHARACTERISTIC_UUID = '0000FFE4-0000-1000-8000-00805F9B34FB';
+
+export const enum BlueToothGenericAccessCharacteristicUUIDs {
+  /** 设备名 */
+  DeviceName = '00002A00-0000-1000-8000-00805F9B34FB'
+}
 
 export const enum BlueToothDeviceInfoCharacteristicUUIDs {
   /** 产品型号特征 */
