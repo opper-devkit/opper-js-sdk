@@ -1,6 +1,6 @@
 import { PickProperty } from '@ngify/types';
 import { AbstractBluetoothLowEnergeDevice } from '@opper/core';
-import { Observable, defer, filter, map, share, shareReplay, tap } from 'rxjs';
+import { Observable, defer, filter, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   readonly characteristicValueChange = new Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>(observer => {
@@ -22,6 +22,12 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   }).pipe(
     filter(o => o.deviceId === this.id),
     share()
+  );
+
+  /** Received Signal Strength Indication */
+  readonly rssiChange = timer(0, 1000).pipe(
+    switchMap(() => wx.getBLEDeviceRSSI({ deviceId: this.id })),
+    map(o => o.RSSI)
   );
 
   /**

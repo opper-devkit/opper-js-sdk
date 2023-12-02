@@ -26,7 +26,7 @@ export abstract class AbstractBluetoothLowEnergeDevice {
   /** 生产商名称 */
   readonly manufacturerName = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ManufacturerName);
 
-  abstract readonly services: Observable<WechatMiniprogram.BLEService[]>
+  abstract readonly services: Observable<WechatMiniprogram.BLEService[]>;
 
   protected mtu: number = 23;
 
