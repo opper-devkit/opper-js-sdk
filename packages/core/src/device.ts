@@ -1,5 +1,5 @@
 import { PickProperty } from '@ngify/types';
-import { Observable, concatAll, filter, from, map, shareReplay, switchMap, take } from 'rxjs';
+import { Observable, Subject, concatAll, filter, from, map, shareReplay, switchMap, take } from 'rxjs';
 import { arrayBufferToHex, hexToAscii, splitArray } from './utils';
 import { BlueToothDeviceInfoCharacteristicUUIDs, BlueToothGenericAccessCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID, GENERIC_ACCESS_SERVICE_UUID } from './uuids';
 
@@ -9,8 +9,9 @@ const EMPTY_HEX_REGEX = /\x00/g;
 
 export abstract class AbstractBluetoothLowEnergeDevice {
   abstract readonly characteristicValueChange: Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>
-  abstract readonly connectionStateChange: Observable<WechatMiniprogram.OnBLEConnectionStateChangeListenerResult>
+  abstract readonly connectedChange: Observable<boolean>;
   abstract readonly rssiChange: Observable<number>
+  abstract readonly services: Observable<WechatMiniprogram.BLEService[]>;
 
   /** 设备名 */
   readonly name = this.genericAccessOf(BlueToothGenericAccessCharacteristicUUIDs.DeviceName);
@@ -27,9 +28,16 @@ export abstract class AbstractBluetoothLowEnergeDevice {
   /** 生产商名称 */
   readonly manufacturerName = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ManufacturerName);
 
-  abstract readonly services: Observable<WechatMiniprogram.BLEService[]>;
-
   protected mtu: number = 23;
+  protected readonly destroy$: Subject<void> = new Subject();
+
+  private _connected: boolean = false;
+  protected set connected(value: boolean) {
+    this._connected = value;
+  }
+  get connected() {
+    return this._connected;
+  }
 
   constructor(
     public readonly id: string

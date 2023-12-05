@@ -108,14 +108,6 @@ export class Opper {
     share()
   );
 
-  private _connected: boolean = false;
-  private set connected(value: boolean) {
-    this._connected = value;
-  }
-  get connected() {
-    return this._connected;
-  }
-
   constructor(
     public readonly device: AbstractBluetoothLowEnergeDevice,
     private parser: AttributeCommandParser = new DefaultAttributeCommandParser()
@@ -209,6 +201,12 @@ export class Opper {
   connect() {
     this.destroy$.next();
 
+    this.device.connectedChange.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(value => {
+      value || this.destroy$.next();
+    });
+
     return this.device.connect().pipe(
       catchError(error => {
         switch (error.errCode) {
@@ -223,14 +221,6 @@ export class Opper {
         }
 
         throw error;
-      }),
-      tap(() => {
-        this.device.connectionStateChange.pipe(
-          takeUntil(this.destroy$)
-        ).subscribe(state => {
-          this.connected = state.connected;
-          state.connected || this.destroy$.next();
-        });
       }),
       // 在 iOS 中，使用 getDeviceCharacteristics 之前必须先调用 getDeviceServices，否则会失败
       switchMap(() => this.device.services),

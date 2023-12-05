@@ -1,6 +1,6 @@
 import { PickProperty } from '@ngify/types';
 import { AbstractBluetoothLowEnergeDevice } from '@opper/core';
-import { Observable, defer, filter, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
+import { Observable, defer, filter, map, share, shareReplay, switchMap, takeUntil, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   readonly characteristicValueChange = new Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>(observer => {
@@ -13,7 +13,7 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   );
 
   /** 连接状态变更 */
-  readonly connectionStateChange = new Observable<WechatMiniprogram.OnBLEConnectionStateChangeListenerResult>(observer => {
+  readonly connectedChange = new Observable<WechatMiniprogram.OnBLEConnectionStateChangeListenerResult>(observer => {
     const next: WechatMiniprogram.OnBLEConnectionStateChangeCallback = result => observer.next(result);
 
     wx.onBLEConnectionStateChange(next);
@@ -21,6 +21,7 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     return () => wx.offBLEConnectionStateChange(next);
   }).pipe(
     filter(o => o.deviceId === this.id),
+    map(o => o.connected),
     share()
   );
 
@@ -49,6 +50,15 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
    * @param options
    */
   connect(options?: Omit<PickProperty<WechatMiniprogram.CreateBLEConnectionOption>, 'deviceId'>) {
+    this.destroy$.next();
+
+    this.connectedChange.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(value => {
+      this.connected = value;
+      value || this.destroy$.next();
+    });
+
     return defer(() =>
       wx.createBLEConnection({ deviceId: this.id, ...options })
     );
