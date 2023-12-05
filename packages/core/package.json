@@ -1,6 +1,6 @@
 {
   "name": "@opper/core",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Opper SDK for JavaScript/TypeScript.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
