@@ -10,6 +10,7 @@ const EMPTY_HEX_REGEX = /\x00/g;
 export abstract class AbstractBluetoothLowEnergeDevice {
   abstract readonly characteristicValueChange: Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>
   abstract readonly connectionStateChange: Observable<WechatMiniprogram.OnBLEConnectionStateChangeListenerResult>
+  abstract readonly rssiChange: Observable<number>
 
   /** 设备名 */
   readonly name = this.genericAccessOf(BlueToothGenericAccessCharacteristicUUIDs.DeviceName);
