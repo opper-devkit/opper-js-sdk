@@ -45,7 +45,7 @@ export abstract class AbstractBluetoothLowEnergeDevice {
 
   abstract connect(options?: Omit<PickProperty<WechatMiniprogram.CreateBLEConnectionOption>, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
 
-  abstract disconnect(options?: Omit<PickProperty<WechatMiniprogram.CloseBLEConnectionOption>, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
+  abstract disconnect(): Observable<boolean>;
 
   abstract getCharacteristics(options: Omit<PickProperty<WechatMiniprogram.GetBLEDeviceCharacteristicsOption>, 'deviceId'>): Observable<WechatMiniprogram.BLECharacteristic[]>
 

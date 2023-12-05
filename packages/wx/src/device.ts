@@ -1,6 +1,6 @@
 import { PickProperty } from '@ngify/types';
 import { AbstractBluetoothLowEnergeDevice } from '@opper/core';
-import { Observable, defer, filter, map, share, shareReplay, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { Observable, catchError, defer, filter, map, of, share, shareReplay, switchMap, takeUntil, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   readonly characteristicValueChange = new Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>(observer => {
@@ -68,10 +68,12 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
    * 关闭 BLE 连接
    * @param options
    */
-  disconnect(options?: Omit<PickProperty<WechatMiniprogram.CloseBLEConnectionOption>, 'deviceId'>) {
+  disconnect() {
     return defer(() =>
-      wx.closeBLEConnection({ deviceId: this.id, ...options })
+      wx.closeBLEConnection({ deviceId: this.id })
     ).pipe(
+      catchError(() => of(false)),
+      map(() => true),
       tap(() => this.reset())
     );
   }
