@@ -108,6 +108,14 @@ export class Opper {
     share()
   );
 
+  private _connected: boolean = false;
+  private set connected(value: boolean) {
+    this._connected = value;
+  }
+  get connected() {
+    return this._connected;
+  }
+
   constructor(
     public readonly device: AbstractBluetoothLowEnergeDevice,
     private parser: AttributeCommandParser = new DefaultAttributeCommandParser()
@@ -216,19 +224,20 @@ export class Opper {
 
         throw error;
       }),
+      tap(() => {
+        this.device.connectionStateChange.pipe(
+          takeUntil(this.destroy$)
+        ).subscribe(state => {
+          this.connected = state.connected;
+          state.connected || this.destroy$.next();
+        });
+      }),
       // 在 iOS 中，使用 getDeviceCharacteristics 之前必须先调用 getDeviceServices，否则会失败
       switchMap(() => this.device.services),
       switchMap(() => this.device.getCharacteristics({ serviceId: ADVERTIS_SERVICE_UUID })),
       // retry(1),
       tap(() => {
-        this.device.connectionStateChange.pipe(
-          filter(o => !o.connected),
-          takeUntil(this.destroy$)
-        ).subscribe(() => {
-          this.destroy$.next();
-        });
-
-        // TODO 247
+        // TODO 247 to constant
         this.device.setMtu(247).pipe(
           catchError(() => of(null)), // 仅部分安卓支持 setMTU，所以这里失败也没关系
           switchMap(() => this.device.notifyCharacteristicValueChange({
