@@ -1,5 +1,5 @@
 import { PickProperty } from '@ngify/types';
-import { Observable, Subject, concatAll, filter, from, map, shareReplay, switchMap, take } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, concatAll, filter, from, map, shareReplay, switchMap, take } from 'rxjs';
 import { arrayBufferToHex, hexToAscii, splitArray } from './utils';
 import { BlueToothDeviceInfoCharacteristicUUIDs, BlueToothGenericAccessCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID, GENERIC_ACCESS_SERVICE_UUID } from './uuids';
 
@@ -27,17 +27,11 @@ export abstract class AbstractBluetoothLowEnergeDevice {
   readonly softwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.SoftwareRevision);
   /** 生产商名称 */
   readonly manufacturerName = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ManufacturerName);
+  /** 当前连接状态 */
+  readonly connected = new BehaviorSubject(false);
 
   protected mtu: number = 23;
   protected readonly destroy$: Subject<void> = new Subject();
-
-  private _connected: boolean = false;
-  protected set connected(value: boolean) {
-    this._connected = value;
-  }
-  get connected() {
-    return this._connected;
-  }
 
   constructor(
     public readonly id: string

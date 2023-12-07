@@ -55,7 +55,7 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     this.connectedChange.pipe(
       takeUntil(this.destroy$)
     ).subscribe(value => {
-      this.connected = value;
+      this.connected.next(value);
       value || this.destroy$.next();
     });
 
