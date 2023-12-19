@@ -34,7 +34,8 @@
   ],
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup"
+    "build": "tsup",
+    "publish:dev": "yalc publish ."
   },
   "publishConfig": {
     "access": "public"

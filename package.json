@@ -7,6 +7,7 @@
     "build:docs": "typedoc",
     "lint": "eslint . --fix",
     "publish": "lerna publish --force-publish=* --exact",
+    "publish:dev": "lerna run publish:dev",
     "prepare": "husky install"
   },
   "workspaces": [
