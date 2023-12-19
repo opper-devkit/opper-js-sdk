@@ -9,7 +9,12 @@ import { ADVERTIS_SERVICE_UUID, NOTIFY_CHARACTERISTIC_UUID, WRITE_CHARACTERISTIC
 export class Opper {
   private readonly destroy$: Subject<void> = new Subject();
 
-  private readonly attributeCommandChange = defer(() => this.device!.characteristicValueChange).pipe(
+  private readonly attributeCommandChange = defer(() =>
+    this.connected.pipe(
+      filter(Boolean),
+      switchMap(() => this.device!.characteristicValueChange),
+    )
+  ).pipe(
     filter(o => o.serviceId === ADVERTIS_SERVICE_UUID && o.characteristicId === NOTIFY_CHARACTERISTIC_UUID),
     map(({ value }) => hexToAscii(arrayBufferToHex(value))),
     source => {
