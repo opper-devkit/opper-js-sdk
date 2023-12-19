@@ -50,12 +50,11 @@ bluetoothService.openAdapter().pipe(
 });
 
 // 创建一个 opper
-const opper = new Opper(
-  new BluetoothLowEnergeDevice('deviceId')
-);
-
+const opper = new Opper();
+// 创建一个 BLE 设备
+const device = new BluetoothLowEnergeDevice('deviceId');
 // 连接设备
-opper.connect().subscribe();
+opper.connect(device).subscribe();
 
 // 订阅称重值
 opper.weightChange.subscribe(/** callback */);

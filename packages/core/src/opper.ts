@@ -1,4 +1,4 @@
-import { Subject, TimeoutError, catchError, defer, filter, from, map, merge, of, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, throwError, timeout } from 'rxjs';
+import { BehaviorSubject, Subject, TimeoutError, catchError, defer, filter, from, map, merge, of, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, throwError, timeout } from 'rxjs';
 import { Attribute } from './attribute';
 import { config } from './config';
 import { AbstractBluetoothLowEnergeDevice } from './device';
@@ -9,7 +9,7 @@ import { ADVERTIS_SERVICE_UUID, NOTIFY_CHARACTERISTIC_UUID, WRITE_CHARACTERISTIC
 export class Opper {
   private readonly destroy$: Subject<void> = new Subject();
 
-  private readonly attributeCommandChange = defer(() => this.device.characteristicValueChange).pipe(
+  private readonly attributeCommandChange = defer(() => this.device!.characteristicValueChange).pipe(
     filter(o => o.serviceId === ADVERTIS_SERVICE_UUID && o.characteristicId === NOTIFY_CHARACTERISTIC_UUID),
     map(({ value }) => hexToAscii(arrayBufferToHex(value))),
     source => {
@@ -49,20 +49,28 @@ export class Opper {
     share()
   );
 
-  readonly weightChange = this.rawWeightChange.pipe(
-    source => this.parser.weight(source),
-    share()
-  );
+  device?: AbstractBluetoothLowEnergeDevice;
 
-  readonly stableWeightChange = this.rawWeightChange.pipe(
-    source => this.parser.stableWeight(source),
-    share()
-  );
+  /** 当前连接状态 */
+  readonly connected = new BehaviorSubject(false);
 
-  readonly unstableWeightChange = this.rawWeightChange.pipe(
-    source => this.parser.unstableWeight(source),
-    share()
-  );
+  readonly weightChange = defer(() =>
+    this.rawWeightChange.pipe(
+      source => this.parser.weight(source),
+    )
+  ).pipe(share());
+
+  readonly stableWeightChange = defer(() =>
+    this.rawWeightChange.pipe(
+      source => this.parser.stableWeight(source)
+    )
+  ).pipe(share());
+
+  readonly unstableWeightChange = defer(() =>
+    this.rawWeightChange.pipe(
+      source => this.parser.unstableWeight(source)
+    )
+  ).pipe(share());
 
   readonly sampleChange = this.attributeCommandChange.pipe(
     filter(cmd => cmd.attribute === Attribute.Wight),
@@ -72,7 +80,7 @@ export class Opper {
 
   readonly batteryChange = this.attributeCommandChange.pipe(
     filter(cmd => cmd.attribute === Attribute.Battery),
-    map(cmd => cmd.value.map(Number)),
+    map(cmd => cmd.value.map(Number) as [number, number]),
     shareReplay(1)
   );
 
@@ -109,11 +117,8 @@ export class Opper {
   );
 
   constructor(
-    public readonly device: AbstractBluetoothLowEnergeDevice,
     private parser: AttributeCommandParser = new DefaultAttributeCommandParser()
-  ) {
-    this.device = device;
-  }
+  ) { }
 
   setParser(parser: AttributeCommandParser) {
     this.parser = parser;
@@ -171,7 +176,7 @@ export class Opper {
     const attCmd = createAttributeCommand(att, value);
     const array = Array.from(stringToUint8Array(attCmd));
 
-    return this.device.writeCharacteristicValueInBatches(array, {
+    return this.device!.writeCharacteristicValueInBatches(array, {
       serviceId: ADVERTIS_SERVICE_UUID,
       characteristicId: WRITE_CHARACTERISTIC_UUID
     }).pipe(
@@ -198,23 +203,26 @@ export class Opper {
     );
   }
 
-  connect() {
+  connect(device: AbstractBluetoothLowEnergeDevice) {
     this.destroy$.next();
 
-    this.device.connectedChange.pipe(
+    this.device = device;
+
+    device.connectedChange.pipe(
       takeUntil(this.destroy$)
     ).subscribe(value => {
+      this.connected.next(value);
       value || this.destroy$.next();
     });
 
-    return this.device.connect().pipe(
+    return device.connect().pipe(
       catchError(error => {
         switch (error.errCode) {
           case -1: // already connect
             return of(null);
 
           case 10003: // connection fail
-            return this.device.disconnect().pipe( // 即使连接失败，也需要主动断开
+            return device.disconnect().pipe( // 即使连接失败，也需要主动断开
               switchMap(() => throwError(() => error)),
               catchError(() => throwError(() => error)),
             );
@@ -223,20 +231,20 @@ export class Opper {
         throw error;
       }),
       // 在 iOS 中，使用 getDeviceCharacteristics 之前必须先调用 getDeviceServices，否则会失败
-      switchMap(() => this.device.services),
-      switchMap(() => this.device.getCharacteristics({ serviceId: ADVERTIS_SERVICE_UUID })),
+      switchMap(() => device.services),
+      switchMap(() => device.getCharacteristics({ serviceId: ADVERTIS_SERVICE_UUID })),
       // retry(1),
       tap(() => {
         // TODO 247 to constant
-        this.device.setMtu(247).pipe(
+        device.setMtu(247).pipe(
           catchError(() => of(null)), // 仅部分安卓支持 setMTU，所以这里失败也没关系
-          switchMap(() => this.device.notifyCharacteristicValueChange({
+          switchMap(() => device.notifyCharacteristicValueChange({
             state: true,
             serviceId: ADVERTIS_SERVICE_UUID,
             characteristicId: NOTIFY_CHARACTERISTIC_UUID
           })),
           // 等待接收到 notify 的时候再开始 check
-          switchMap(() => this.device.characteristicValueChange),
+          switchMap(() => device.characteristicValueChange),
           take(1),
           switchMap(() => merge(
             // 率先订阅一遍，缓存起来
@@ -255,7 +263,7 @@ export class Opper {
   }
 
   disconnect() {
-    return this.device.disconnect();
+    return this.device!.disconnect();
   }
 
 }
