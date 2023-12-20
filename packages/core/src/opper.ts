@@ -58,24 +58,28 @@ export class Opper {
 
   /** 当前连接状态 */
   readonly connected = new BehaviorSubject(false);
+  readonly parser = new BehaviorSubject<AttributeCommandParser>(new DefaultAttributeCommandParser());
 
-  readonly weightChange = defer(() =>
-    this.rawWeightChange.pipe(
-      source => this.parser.weight(source),
-    )
-  ).pipe(share());
+  readonly weightChange = this.parser.pipe(
+    switchMap(parser => this.rawWeightChange.pipe(
+      source => parser.weight(source),
+    )),
+    share()
+  );
 
-  readonly stableWeightChange = defer(() =>
-    this.rawWeightChange.pipe(
-      source => this.parser.stableWeight(source)
-    )
-  ).pipe(share());
+  readonly stableWeightChange = this.parser.pipe(
+    switchMap(parser => this.rawWeightChange.pipe(
+      source => parser.stableWeight(source),
+    )),
+    share()
+  );
 
-  readonly unstableWeightChange = defer(() =>
-    this.rawWeightChange.pipe(
-      source => this.parser.unstableWeight(source)
-    )
-  ).pipe(share());
+  readonly unstableWeightChange = this.parser.pipe(
+    switchMap(parser => this.rawWeightChange.pipe(
+      source => parser.unstableWeight(source),
+    )),
+    share()
+  );
 
   readonly sampleChange = this.attributeCommandChange.pipe(
     filter(cmd => cmd.attribute === Attribute.Wight),
@@ -121,12 +125,8 @@ export class Opper {
     share()
   );
 
-  constructor(
-    private parser: AttributeCommandParser = new DefaultAttributeCommandParser()
-  ) { }
-
   setParser(parser: AttributeCommandParser) {
-    this.parser = parser;
+    this.parser.next(parser);
   }
 
   check() {
