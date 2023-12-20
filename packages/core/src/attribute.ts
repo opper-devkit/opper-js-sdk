@@ -70,7 +70,7 @@ export const enum Attribute {
    *
    * `ATT+ACCURACY=[P]`
    *
-   * P：1000=1kg，500=1斤
+   * P：克
    */
   Accuracy = 'ACCURACY',
   /**
