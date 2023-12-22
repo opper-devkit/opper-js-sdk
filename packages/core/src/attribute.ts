@@ -66,25 +66,37 @@ export const enum Attribute {
    */
   Battery = 'BAT',
   /**
-   * 设置精度
+   * 设置精度，默认10g
    *
-   * `ATT+ACCURACY=[P]`
+   * `ATT+ACCURACY=[G]`
    *
-   * P：克
+   * G：克
    */
   Accuracy = 'ACCURACY',
   /**
-   * 设置波特率
-   * 默认0
+   * 稳定波动幅度，默认1g
+   *
+   * `ATT+LOCK=[G]`
+   *
+   * G: 克
+   */
+  Lock = 'LOCK',
+  /**
+   * 设置波特率，默认0
    */
   BaudRate = 'BAUDRATE',
   /**
-   * 设置滤波器
-   * 默认0，
-   * 值越大，Hz越小，数值变化越慢
+   * 设置滤波器，默认40
+   * Hz越大数值变化越快
+   *
    * 0: 0.5Hz
    * 1: 0.35Hz
    * 2: 0.25Hz
+   *
+   * 10: 1Hz
+   * 20: 2Hz
+   * 40: 4Hz
+   * 80: 8Hz
    */
   Filter = 'FILTER',
   /**

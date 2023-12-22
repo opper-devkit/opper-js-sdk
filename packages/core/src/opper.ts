@@ -105,6 +105,12 @@ export class Opper {
     shareReplay(1)
   );
 
+  readonly lockChange = this.attributeCommandChange.pipe(
+    filter(cmd => cmd.attribute === Attribute.Lock),
+    map(cmd => +cmd.value[0]),
+    shareReplay(1)
+  );
+
   readonly baudRateChange = this.attributeCommandChange.pipe(
     filter(cmd => cmd.attribute === Attribute.BaudRate),
     map(cmd => +cmd.value[0]),
@@ -155,6 +161,10 @@ export class Opper {
 
   setAccuracy(value: number) {
     return this.emit(Attribute.Accuracy, value);
+  }
+
+  setLock(value: number) {
+    return this.emit(Attribute.Lock, value);
   }
 
   setBaudRate(value: number) {
@@ -255,6 +265,7 @@ export class Opper {
             // 率先订阅一遍，缓存起来
             this.batteryChange.pipe(take(1)),
             this.accuracyChange.pipe(take(1)),
+            this.lockChange.pipe(take(1)),
             this.idleChange.pipe(take(1)),
             this.baudRateChange.pipe(take(1)),
             this.filterChange.pipe(take(1)),
