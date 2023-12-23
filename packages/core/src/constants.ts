@@ -17,3 +17,5 @@ export const ATT_LOCK_PATTERN = /^ATT\+LOCK=\d+$/;
 export const ATT_ACCURACY_PATTERN = /^ATT\+ACCURACY=\d+$/;
 /** ATT+AUTO_CLOSE=5 */
 export const ATT_AUTO_CLOSE_PATTERN = /^ATT\+AUTO_CLOSE=\d+$/;
+/** ATT+FILTER=0 */
+export const ATT_FILTER_PATTERN = /^ATT\+FILTER=\d+$/;
