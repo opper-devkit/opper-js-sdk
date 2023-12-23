@@ -14,8 +14,7 @@ export class DefaultAttributeCommandParser implements AttributeCommandParser {
 
   weight(source: Observable<AttributeCommand>): Observable<number> {
     return source.pipe(
-      map(cmd => +cmd.value[0]),
-      filter(o => typeof o === 'number')
+      map(cmd => +cmd.value[0])
     );
   }
 
@@ -30,7 +29,7 @@ export class DefaultAttributeCommandParser implements AttributeCommandParser {
 
   unstableWeight(source: Observable<AttributeCommand>): Observable<number> {
     return source.pipe(
-      bufferCount(3, 1),
+      bufferCount(5, 1),
       filter(buf => buf.every(cmd => cmd.value[2] === '0')),
       map(buf => buf.at(-1)!), // 取出最后一个
       source => this.weight(source)

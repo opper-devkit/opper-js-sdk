@@ -1,6 +1,6 @@
 import { SafeAny } from '@ngify/types';
 import { Attribute } from './attribute';
-import { ATT_ACCURACY_PATTERN, ATT_ACK_PATTERN, ATT_AUTO_CLOSE_PATTERN, ATT_BAT_PATTERN, ATT_CMD_PATTERN, ATT_IDLE_PATTERN, ATT_WGT_PATTERN } from './constants';
+import { ATT_ACCURACY_PATTERN, ATT_ACK_PATTERN, ATT_AUTO_CLOSE_PATTERN, ATT_BAT_PATTERN, ATT_CMD_PATTERN, ATT_IDLE_PATTERN, ATT_LOCK_PATTERN, ATT_WGT_PATTERN } from './constants';
 import { AttributeCommand } from './interface';
 
 const ATTRIBUTE_TOKEN_PREFIX = 'ATT+' as const;
@@ -47,6 +47,10 @@ export function verifyAttributeCommand(cmd: string) {
 
   if (cmd.startsWith(createAttributeToken(Attribute.Accuracy))) {
     return ATT_ACCURACY_PATTERN.test(cmd);
+  }
+
+  if (cmd.startsWith(createAttributeToken(Attribute.Lock))) {
+    return ATT_LOCK_PATTERN.test(cmd);
   }
 
   return ATT_CMD_PATTERN.test(cmd);
