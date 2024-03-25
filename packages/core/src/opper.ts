@@ -263,6 +263,7 @@ export class Opper {
           take(1),
           switchMap(() => merge(
             // 率先订阅一遍，缓存起来
+            // TODO BUG：accuracy 更新了，这些缓存没更新
             this.batteryChange.pipe(take(1)),
             this.accuracyChange.pipe(take(1)),
             this.lockChange.pipe(take(1)),

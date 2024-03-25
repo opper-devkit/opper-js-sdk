@@ -4,6 +4,7 @@ import { Observable, catchError, defer, filter, map, of, share, shareReplay, swi
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   readonly characteristicValueChange = new Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>(observer => {
+    // 微信BUG：Android 下 onBLECharacteristicValueChange 只能同时存在一个，添加新的会覆盖旧的；iOS 却能同时存在多个
     wx.onBLECharacteristicValueChange(result => observer.next(result));
 
     return () => wx.offBLECharacteristicValueChange();
