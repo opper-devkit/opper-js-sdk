@@ -1,6 +1,6 @@
 import { PickProperty } from '@ngify/types';
 import { Observable, concatAll, filter, from, map, shareReplay, switchMap, take } from 'rxjs';
-import { arrayBufferToHex, hexToAscii, splitArray } from './utils';
+import { arrayBufferToHex, hexToAscii, isArrayBuffer, splitArray, splitArrayBuffer } from './utils';
 import { BlueToothDeviceInfoCharacteristicUUIDs, BlueToothGenericAccessCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID, GENERIC_ACCESS_SERVICE_UUID } from './uuids';
 
 // 空白字符（HEX: 00）
@@ -88,13 +88,19 @@ export abstract class AbstractBluetoothLowEnergeDevice {
    * @param value
    * @param options
    */
-  writeCharacteristicValueInBatches(value: number[], options: Omit<PickProperty<WechatMiniprogram.WriteBLECharacteristicValueOption>, 'value' | 'deviceId'>) {
+  writeCharacteristicValueInBatches(value: ArrayLike<number> | ArrayBuffer, options: Omit<PickProperty<WechatMiniprogram.WriteBLECharacteristicValueOption>, 'value' | 'deviceId'>) {
     // 小程序中 MTU 为 ATT_MTU，包含 Op-Code 和 Attribute Handle 的长度
     // 实际可以传输的数据长度为 MTU - 3，MTU 默认为 23，所以实际可用的长度为 23-3=20
+
+    const length = this.mtu - 3;
+    const buffers = isArrayBuffer(value)
+      ? splitArrayBuffer(value, length)
+      : splitArray<number>(value, length).map(arr => new Uint8Array(arr).buffer);
+
     return from(
-      splitArray(value, this.mtu - 3).map(arr =>
+      buffers.map(value =>
         this.writeCharacteristicValue({
-          value: new Uint8Array(arr).buffer,
+          value,
           ...options
         })
       )

@@ -1,4 +1,3 @@
-import { SafeAny } from '@ngify/types';
 import { Attribute } from './attribute';
 import { ATT_ACCURACY_PATTERN, ATT_ACK_PATTERN, ATT_AUTO_CLOSE_PATTERN, ATT_BAT_PATTERN, ATT_CMD_PATTERN, ATT_FILTER_PATTERN, ATT_IDLE_PATTERN, ATT_LOCK_PATTERN, ATT_WGT_PATTERN } from './constants';
 import { AttributeCommand } from './interface';
@@ -103,20 +102,44 @@ export function hexToAscii(hex: string) {
 }
 
 /**
- * splitArray 函数将数组拆分为指定长度的较小数组。
- * @param arr - `arr` 参数是任何类型的数组。
- * @param length - splitArray 函数中的 length 参数表示每个子数组所需的长度。它确定每个子数组中应包含原始数组中的多少元素。
- * @returns 函数“splitArray”返回一个数组的数组。每个内部数组都包含原始数组“arr”的一部分，其长度由“length”参数指定。
+ * 将数组按指定长度分割成子数组。
+ *
+ * @template T - 数组元素的类型。
+ * @param arr - 要分割的数组。
+ * @param length - 每个子数组的长度。
+ * @returns 分割后的子数组。
  */
-export function splitArray<T extends SafeAny[]>(arr: T, length: number) {
-  const tmp = [] as T[];
+export function splitArray<T>(arr: ArrayLike<T>, length: number) {
+  const tmp: T[][] = [];
 
   while (arr.length) {
-    tmp.push(arr.slice(0, length) as T);
-    arr = arr.slice(length) as T;
+    tmp.push(Array.from(arr).slice(0, length));
+    arr = Array.from(arr).slice(length) as ArrayLike<T>;
   }
 
   return tmp;
+}
+
+/**
+ * 将 ArrayBuffer 拆分为指定长度的子数组。
+ *
+ * @param buffer 要拆分的 ArrayBuffer。
+ * @param length 子数组的长度。
+ * @returns 拆分后的子数组。
+ */
+export function splitArrayBuffer(buffer: ArrayBuffer, length: number) {
+  const tmp: ArrayBuffer[] = [];
+
+  while (buffer.byteLength) {
+    tmp.push(buffer.slice(0, length));
+    buffer = buffer.slice(length);
+  }
+
+  return tmp;
+}
+
+export function isArrayBuffer(value: unknown): value is ArrayBuffer {
+  return value instanceof ArrayBuffer;
 }
 
 /**
