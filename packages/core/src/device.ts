@@ -1,5 +1,6 @@
 import { PickProperty } from '@ngify/types';
 import { Observable, concatAll, filter, from, map, shareReplay, switchMap, take } from 'rxjs';
+import { DEFAULT_MTU } from './constants';
 import { arrayBufferToHex, hexToAscii, isArrayBuffer, splitArray, splitArrayBuffer } from './utils';
 import { BlueToothDeviceInfoCharacteristicUUIDs, BlueToothGenericAccessCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID, GENERIC_ACCESS_SERVICE_UUID } from './uuids';
 
@@ -28,7 +29,7 @@ export abstract class AbstractBluetoothLowEnergeDevice {
   /** 生产商名称 */
   readonly manufacturerName = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ManufacturerName);
 
-  protected mtu: number = 23;
+  protected mtu: number = DEFAULT_MTU;
 
   constructor(
     public readonly id: string

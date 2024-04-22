@@ -1,5 +1,5 @@
 import { Observable, bufferCount, filter, map } from 'rxjs';
-import { AttributeCommand } from './interface';
+import { AttributeCommand } from './attribute';
 
 export interface AttributeCommandParser {
   readonly id: number;

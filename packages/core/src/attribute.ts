@@ -82,10 +82,6 @@ export const enum Attribute {
    */
   Lock = 'LOCK',
   /**
-   * 设置波特率，默认0
-   */
-  BaudRate = 'BAUDRATE',
-  /**
    * 设置滤波器，默认40
    * Hz越大数值变化越快
    *
@@ -100,11 +96,12 @@ export const enum Attribute {
    */
   Filter = 'FILTER',
   /**
-   * 第三方秤台，串口原始值
-   */
-  Raw = 'RAW',
-  /**
    * 重启设备
    */
   Reboot = 'RST'
+}
+
+export interface AttributeCommand {
+  attribute: Attribute;
+  value: string[];
 }

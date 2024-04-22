@@ -1,5 +1,5 @@
 import { PickProperty } from '@ngify/types';
-import { AbstractBluetoothLowEnergeDevice } from '@opper/core';
+import { AbstractBluetoothLowEnergeDevice, DEFAULT_MTU } from '@opper/core';
 import { Observable, catchError, defer, filter, map, of, share, shareReplay, switchMap, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
@@ -43,7 +43,7 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   );
 
   private reset() {
-    this.mtu = 23;
+    this.mtu = DEFAULT_MTU;
   }
 
   /**

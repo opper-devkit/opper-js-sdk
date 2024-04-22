@@ -50,7 +50,7 @@ export class Opper {
   );
 
   private readonly rawWeightChange = this.attributeCommandChange.pipe(
-    filter(o => o.attribute === Attribute.Wight || o.attribute === Attribute.Raw),
+    filter(o => o.attribute === Attribute.Wight),
     share()
   );
 
@@ -111,12 +111,6 @@ export class Opper {
     shareReplay(1)
   );
 
-  readonly baudRateChange = this.attributeCommandChange.pipe(
-    filter(cmd => cmd.attribute === Attribute.BaudRate),
-    map(cmd => +cmd.value[0]),
-    shareReplay(1)
-  );
-
   readonly filterChange = this.attributeCommandChange.pipe(
     filter(cmd => cmd.attribute === Attribute.Filter),
     map(cmd => +cmd.value[0]),
@@ -165,10 +159,6 @@ export class Opper {
 
   setLock(value: number) {
     return this.emit(Attribute.Lock, value);
-  }
-
-  setBaudRate(value: number) {
-    return this.emit(Attribute.BaudRate, value);
   }
 
   setFilter(value: number) {
@@ -268,7 +258,6 @@ export class Opper {
             this.accuracyChange.pipe(take(1)),
             this.lockChange.pipe(take(1)),
             this.idleChange.pipe(take(1)),
-            this.baudRateChange.pipe(take(1)),
             this.filterChange.pipe(take(1)),
             this.check()
           )),

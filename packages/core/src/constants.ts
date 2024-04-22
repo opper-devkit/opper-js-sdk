@@ -19,3 +19,5 @@ export const ATT_ACCURACY_PATTERN = /^ATT\+ACCURACY=\d+$/;
 export const ATT_AUTO_CLOSE_PATTERN = /^ATT\+AUTO_CLOSE=\d+$/;
 /** ATT+FILTER=0 */
 export const ATT_FILTER_PATTERN = /^ATT\+FILTER=\d+$/;
+
+export const DEFAULT_MTU = 23;
