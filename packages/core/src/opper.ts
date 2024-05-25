@@ -137,10 +137,11 @@ export class Opper {
    * 校准
    * @param zeroSampleValue 归零时的采样值
    * @param correctionValue 单位/克
+   * @param correctionSampleValue 校准时的采样值（可选）
    */
-  calibrate(zeroSampleValue: number, calibrationValue: number) {
+  calibrate(zeroSampleValue: number, calibrationValue: number, correctionSampleValue?: number) {
     return this.emit(Attribute.Ref0, zeroSampleValue).pipe(
-      switchMap(() => this.sampleChange),
+      switchMap(() => correctionSampleValue ? of(correctionSampleValue) : this.sampleChange),
       timeout(3000),
       take(1),
       switchMap((value: number) =>
