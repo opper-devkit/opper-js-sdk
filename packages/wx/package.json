@@ -1,6 +1,6 @@
 {
   "name": "@opper/wx",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Opper SDK for JavaScript/TypeScript.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@ngify/types": "^1.5.2",
-    "@opper/core": "0.3.6"
+    "@opper/core": "0.3.7"
   },
   "peerDependencies": {
     "miniprogram-api-typings": "^3.10.0",
