@@ -215,10 +215,11 @@ export class Opper {
     this.device = device;
 
     device.connectedChange.pipe(
+      filter(o => !o),
       takeUntil(this.destroy$)
-    ).subscribe(value => {
-      this.connected.next(value);
-      value || this.destroy$.next();
+    ).subscribe(() => {
+      this.connected.next(false);
+      this.destroy$.next();
     });
 
     return device.connect().pipe(
@@ -238,6 +239,7 @@ export class Opper {
       }),
       // 在 iOS 中，使用 getDeviceCharacteristics 之前必须先调用 getDeviceServices，否则会失败
       switchMap(() => device.services),
+      tap(() => this.connected.next(true)), // 在获取到服务之后，才算真正连接成功
       switchMap(() => device.getCharacteristics({ serviceId: ADVERTIS_SERVICE_UUID })),
       // retry(1),
       tap(() => {
