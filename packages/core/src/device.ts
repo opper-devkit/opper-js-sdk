@@ -2,7 +2,7 @@ import { PickProperty } from '@ngify/types';
 import { Observable, concatAll, filter, from, map, shareReplay, switchMap, take } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { arrayBufferToHex, hexToAscii, isArrayBuffer, splitArray, splitArrayBuffer } from './utils';
-import { BlueToothDeviceInfoCharacteristicUUIDs, BlueToothGenericAccessCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID, GENERIC_ACCESS_SERVICE_UUID } from './uuids';
+import { BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from './uuids';
 
 // 空白字符（HEX: 00）
 // eslint-disable-next-line no-control-regex
@@ -13,9 +13,9 @@ export abstract class AbstractBluetoothLowEnergeDevice {
   abstract readonly connectedChange: Observable<boolean>;
   abstract readonly rssiChange: Observable<number>
   abstract readonly services: Observable<WechatMiniprogram.BLEService[]>;
-
   /** 设备名 */
-  readonly name = this.genericAccessOf(BlueToothGenericAccessCharacteristicUUIDs.DeviceName);
+  abstract readonly name: Observable<string>;
+
   /** 产品型号 */
   readonly modelNumber = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ModelNumber);
   /** 产品序列号 */
@@ -47,24 +47,6 @@ export abstract class AbstractBluetoothLowEnergeDevice {
   abstract getMtu(): Observable<WechatMiniprogram.GetBLEMTUSuccessCallbackResult>
   abstract notifyCharacteristicValueChange(options: Omit<WechatMiniprogram.NotifyBLECharacteristicValueChangeOption, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
   abstract writeCharacteristicValue(options: Omit<PickProperty<WechatMiniprogram.WriteBLECharacteristicValueOption>, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
-
-  private genericAccessOf(uuid: BlueToothGenericAccessCharacteristicUUIDs) {
-    return this.getCharacteristics({ serviceId: GENERIC_ACCESS_SERVICE_UUID }).pipe(
-      switchMap(() => this.readCharacteristicValue({
-        serviceId: GENERIC_ACCESS_SERVICE_UUID,
-        characteristicId: uuid
-      })),
-      switchMap(() => this.characteristicValueChange),
-      filter(o => o.serviceId === GENERIC_ACCESS_SERVICE_UUID && o.characteristicId === uuid),
-      map(({ value }) => {
-        const hex = arrayBufferToHex(value);
-        const ascii = hexToAscii(hex);
-        return ascii.replace(EMPTY_HEX_REGEX, '');
-      }),
-      take(1),
-      shareReplay({ bufferSize: 1, refCount: true })
-    );
-  }
 
   private deviceInfoOf(uuid: BlueToothDeviceInfoCharacteristicUUIDs) {
     return this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID }).pipe(

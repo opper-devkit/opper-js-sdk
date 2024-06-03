@@ -23,8 +23,11 @@
     "forceConsistentCasingInFileNames": true,
     "preserveConstEnums": true,
     "paths": {
-      "@opper/*": [
-        "packages/*"
+      "@opper/core": [
+        "packages/core/src"
+      ],
+      "@opper/wx": [
+        "packages/wx/src"
       ]
     }
   }

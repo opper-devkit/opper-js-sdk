@@ -42,6 +42,15 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     shareReplay({ bufferSize: 1, refCount: true })
   );
 
+  readonly name = this.services.pipe(
+    switchMap(services => wx.getConnectedBluetoothDevices({
+      services: services
+        .filter(service => service.isPrimary)
+        .map(service => service.uuid.slice(4, 8)) // 去掉前面的0000，0000180A-0000-1000-8000-00805F9B34FB => 180A
+    })),
+    map(o => o.devices.find(o => o.deviceId === this.id)?.name || ''),
+  );
+
   private reset() {
     this.mtu = DEFAULT_MTU;
   }
