@@ -117,7 +117,7 @@ export class Opper {
     shareReplay(1)
   );
 
-  readonly eventChanges = merge(
+  readonly events = merge(
     this.attributeCommandChange.pipe(
       filter(cmd => cmd.attribute === Attribute.AutoClose)
     )
