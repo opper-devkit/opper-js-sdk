@@ -45,7 +45,7 @@ export class BluetoothService {
    * @param options
    */
   startDevicesDiscovery(options: PickProperty<WechatMiniprogram.StartBluetoothDevicesDiscoveryOption>) {
-    return defer(() => wx.startBluetoothDevicesDiscovery(options));
+    return defer(() => wx.startBluetoothDevicesDiscovery({ powerLevel: 'high', ...options }));
   }
 
   /**
