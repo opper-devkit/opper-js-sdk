@@ -66,7 +66,7 @@ export const enum Attribute {
    */
   Battery = 'BAT',
   /**
-   * 设置分度值，默认10g
+   * 设置分度值，默认1g
    *
    * `ATT+ACCURACY=[G]`
    *
@@ -74,7 +74,7 @@ export const enum Attribute {
    */
   Accuracy = 'ACCURACY',
   /**
-   * 稳定波动幅度，默认1g
+   * 稳定波动幅度，默认10g
    *
    * `ATT+LOCK=[G]`
    *
