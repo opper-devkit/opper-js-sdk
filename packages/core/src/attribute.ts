@@ -49,7 +49,7 @@ export const enum Attribute {
    */
   AutoClose = 'AUTO_CLOSE',
   /**
-   * 空闲时间
+   * 空闲时间，默认10min
    *
    * `ATT+IDLE=[T]`
    *

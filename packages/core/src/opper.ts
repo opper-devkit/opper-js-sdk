@@ -93,29 +93,10 @@ export class Opper {
     shareReplay(1)
   );
 
-  readonly idleChange = this.attributeCommandChange.pipe(
-    filter(cmd => cmd.attribute === Attribute.Idle),
-    map(cmd => +cmd.value[0]),
-    shareReplay(1)
-  );
-
-  readonly accuracyChange = this.attributeCommandChange.pipe(
-    filter(cmd => cmd.attribute === Attribute.Accuracy),
-    map(cmd => +cmd.value[0]),
-    shareReplay(1)
-  );
-
-  readonly lockChange = this.attributeCommandChange.pipe(
-    filter(cmd => cmd.attribute === Attribute.Lock),
-    map(cmd => +cmd.value[0]),
-    shareReplay(1)
-  );
-
-  readonly filterChange = this.attributeCommandChange.pipe(
-    filter(cmd => cmd.attribute === Attribute.Filter),
-    map(cmd => +cmd.value[0]),
-    shareReplay(1)
-  );
+  readonly idleChange = new BehaviorSubject(10);
+  readonly accuracyChange = new BehaviorSubject(1);
+  readonly lockChange = new BehaviorSubject(10);
+  readonly filterChange = new BehaviorSubject(40);
 
   readonly events = merge(
     this.attributeCommandChange.pipe(
@@ -151,19 +132,27 @@ export class Opper {
   }
 
   setIdle(value: number) {
-    return this.emit(Attribute.Idle, value);
+    return this.emit(Attribute.Idle, value).pipe(
+      tap(() => this.idleChange.next(value))
+    );
   }
 
   setAccuracy(value: number) {
-    return this.emit(Attribute.Accuracy, value);
+    return this.emit(Attribute.Accuracy, value).pipe(
+      tap(() => this.accuracyChange.next(value))
+    );
   }
 
   setLock(value: number) {
-    return this.emit(Attribute.Lock, value);
+    return this.emit(Attribute.Lock, value).pipe(
+      tap(() => this.lockChange.next(value))
+    );
   }
 
   setFilter(value: number) {
-    return this.emit(Attribute.Filter, value);
+    return this.emit(Attribute.Filter, value).pipe(
+      tap(() => this.filterChange.next(value))
+    );
   }
 
   shutdown() {
@@ -243,6 +232,34 @@ export class Opper {
       switchMap(() => device.getCharacteristics({ serviceId: ADVERTIS_SERVICE_UUID })),
       // retry(1),
       tap(() => {
+        this.attributeCommandChange.pipe(
+          filter(cmd => cmd.attribute === Attribute.Idle),
+          map(cmd => +cmd.value[0]),
+          take(1),
+          takeUntil(this.destroy$)
+        ).subscribe(value => this.idleChange.next(value));
+
+        this.attributeCommandChange.pipe(
+          filter(cmd => cmd.attribute === Attribute.Accuracy),
+          map(cmd => +cmd.value[0]),
+          take(1),
+          takeUntil(this.destroy$)
+        ).subscribe(value => this.accuracyChange.next(value));
+
+        this.attributeCommandChange.pipe(
+          filter(cmd => cmd.attribute === Attribute.Lock),
+          map(cmd => +cmd.value[0]),
+          take(1),
+          takeUntil(this.destroy$)
+        ).subscribe(value => this.lockChange.next(value));
+
+        this.attributeCommandChange.pipe(
+          filter(cmd => cmd.attribute === Attribute.Filter),
+          map(cmd => +cmd.value[0]),
+          take(1),
+          takeUntil(this.destroy$)
+        ).subscribe(value => this.filterChange.next(value));
+
         // TODO 247 to constant
         device.setMtu(247).pipe(
           catchError(() => of(null)), // 仅部分安卓支持 setMTU，所以这里失败也没关系
@@ -254,16 +271,7 @@ export class Opper {
           // 等待接收到 notify 的时候再开始 check
           switchMap(() => device.characteristicValueChange),
           take(1),
-          switchMap(() => merge(
-            // 率先订阅一遍，缓存起来
-            // TODO BUG：accuracy 更新了，这些缓存没更新
-            this.batteryChange.pipe(take(1)),
-            this.accuracyChange.pipe(take(1)),
-            this.lockChange.pipe(take(1)),
-            this.idleChange.pipe(take(1)),
-            this.filterChange.pipe(take(1)),
-            this.check()
-          )),
+          switchMap(() => this.check()),
           takeUntil(this.destroy$)
         ).subscribe();
       }),
