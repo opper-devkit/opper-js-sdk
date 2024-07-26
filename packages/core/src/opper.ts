@@ -1,4 +1,4 @@
-import { BehaviorSubject, Subject, TimeoutError, catchError, defer, filter, from, map, merge, of, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, throwError, timeout } from 'rxjs';
+import { BehaviorSubject, Subject, TimeoutError, bufferCount, catchError, defer, filter, from, map, merge, of, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, throwError, timeout } from 'rxjs';
 import { Attribute } from './attribute';
 import { config } from './config';
 import { AbstractBluetoothLowEnergeDevice } from './device';
@@ -67,19 +67,21 @@ export class Opper {
     share()
   );
 
-  readonly stableWeightChange = this.parser.pipe(
-    switchMap(parser => this.rawWeightChange.pipe(
-      source => parser.stableWeight(source),
-    )),
-    share()
-  );
+  stableWeightChange(count: number = 1) {
+    return this.rawWeightChange.pipe(
+      bufferCount(count, 1),
+      filter(buf => buf.every(cmd => cmd.value[2] === '1')),
+      map(buf => +buf.at(-1)!.value[0])
+    );
+  }
 
-  readonly unstableWeightChange = this.parser.pipe(
-    switchMap(parser => this.rawWeightChange.pipe(
-      source => parser.unstableWeight(source),
-    )),
-    share()
-  );
+  unstableWeightChange(count: number = 1) {
+    return this.rawWeightChange.pipe(
+      bufferCount(count, 1),
+      filter(buf => buf.every(cmd => cmd.value[2] === '0')),
+      map(buf => +buf.at(-1)!.value[0])
+    );
+  }
 
   readonly sampleChange = this.attributeCommandChange.pipe(
     filter(cmd => cmd.attribute === Attribute.Wight),
