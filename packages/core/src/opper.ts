@@ -50,7 +50,7 @@ export class Opper {
   );
 
   private readonly rawWeightChange = this.attributeCommandChange.pipe(
-    filter(o => o.attribute === Attribute.Wight),
+    filter(o => o.attribute === Attribute.Weight),
     share()
   );
 
@@ -84,7 +84,7 @@ export class Opper {
   }
 
   readonly sampleChange = this.attributeCommandChange.pipe(
-    filter(cmd => cmd.attribute === Attribute.Wight),
+    filter(cmd => cmd.attribute === Attribute.Weight),
     map(cmd => +cmd.value[1]),
     shareReplay(1)
   );

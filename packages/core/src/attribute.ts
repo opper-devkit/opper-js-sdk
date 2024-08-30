@@ -8,7 +8,7 @@ export const enum Attribute {
    * - S：采样值
    * - N：0表示不稳定，1表示稳定，2表示超重
    */
-  Wight = 'WGT',
+  Weight = 'WGT',
   /**
    * 设置归零的采样值
    *

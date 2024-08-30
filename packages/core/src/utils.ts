@@ -23,7 +23,7 @@ export function createAttributeCommand(att: Attribute, value?: string | number |
 }
 
 export function verifyAttributeCommand(cmd: string) {
-  if (cmd.startsWith(createAttributeToken(Attribute.Wight))) {
+  if (cmd.startsWith(createAttributeToken(Attribute.Weight))) {
     return ATT_WGT_PATTERN.test(cmd);
   }
 
