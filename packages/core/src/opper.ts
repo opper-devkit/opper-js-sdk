@@ -98,7 +98,7 @@ export class Opper {
   readonly idleChange = new BehaviorSubject(10);
   readonly accuracyChange = new BehaviorSubject(1);
   readonly lockChange = new BehaviorSubject(10);
-  readonly filterChange = new BehaviorSubject(40);
+  readonly filterChange = new BehaviorSubject(20);
 
   readonly events = merge(
     this.attributeCommandChange.pipe(

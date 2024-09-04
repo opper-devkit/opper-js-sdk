@@ -82,7 +82,7 @@ export const enum Attribute {
    */
   Lock = 'LOCK',
   /**
-   * 设置滤波器，默认40
+   * 设置滤波器，默认20
    * Hz越大数值变化越快
    *
    * 0: 0.5Hz
