@@ -1,5 +1,5 @@
 import { PickProperty } from '@ngify/types';
-import { Observable, concatAll, filter, from, map, shareReplay, switchMap, take } from 'rxjs';
+import { Observable, concatAll, filter, from, last, map, shareReplay, switchMap, take } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { arrayBufferToHex, hexToAscii, isArrayBuffer, splitArray, splitArrayBuffer } from './utils';
 import { BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from './uuids';
@@ -88,7 +88,8 @@ export abstract class AbstractBluetoothLowEnergeDevice {
         })
       )
     ).pipe(
-      concatAll()
+      concatAll(),
+      last()
     );
   }
 }
