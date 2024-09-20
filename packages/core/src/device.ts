@@ -1,5 +1,5 @@
 import { AnyObject, SafeAny } from '@ngify/types';
-import { Observable, concatAll, filter, from, last, map, shareReplay, switchMap, take } from 'rxjs';
+import { Observable, concatAll, defer, filter, from, last, map, shareReplay, switchMap, take } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, BluetoothLowEnergeService } from './typing';
 import { arrayBufferToHex, hexToAscii, isArrayBuffer, splitArray, splitArrayBuffer } from './utils';
@@ -38,7 +38,7 @@ export abstract class AbstractBluetoothLowEnergeDevice {
 
   abstract connect(options?: AnyObject): Observable<SafeAny>
 
-  abstract disconnect(): Observable<boolean>;
+  abstract disconnect(): Observable<SafeAny>;
 
   abstract getCharacteristics(options: { serviceId: string } & AnyObject): Observable<BluetoothLowEnergeCharacteristic[]>
 
@@ -52,7 +52,7 @@ export abstract class AbstractBluetoothLowEnergeDevice {
   abstract writeCharacteristicValue(value: ArrayBuffer, options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>
 
   private deviceInfoOf(uuid: BlueToothDeviceInfoCharacteristicUUIDs) {
-    return this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID }).pipe(
+    return defer(() => this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID })).pipe(
       switchMap(() => this.readCharacteristicValue({
         serviceId: DEVICE_INFO_SERVICE_UUID,
         characteristicId: uuid
