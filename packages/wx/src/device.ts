@@ -1,6 +1,6 @@
 import { PickProperty } from '@ngify/types';
 import { AbstractBluetoothLowEnergeDevice, DEFAULT_MTU } from '@opper/core';
-import { Observable, catchError, defer, filter, map, of, share, shareReplay, switchMap, tap, timer } from 'rxjs';
+import { Observable, defer, filter, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   readonly characteristicValueChange = new Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>(observer => {
@@ -73,8 +73,6 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     return defer(() =>
       wx.closeBLEConnection({ deviceId: this.id })
     ).pipe(
-      catchError(() => of(false)),
-      map(() => true),
       tap(() => this.reset())
     );
   }
@@ -105,8 +103,7 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
 
   setMtu(mtu: number) {
     return defer(() => wx.setBLEMTU({ deviceId: this.id, mtu })).pipe(
-      tap(o => this.mtu = o.mtu),
-      map(o => o.mtu)
+      map(o => this.mtu = o.mtu)
     );
   }
 
