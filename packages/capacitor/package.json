@@ -1,0 +1,51 @@
+{
+  "name": "@opper/capacitor",
+  "version": "0.4.2",
+  "description": "Opper SDK for Capacitor",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "author": "opper",
+  "license": "MIT",
+  "sideEffects": false,
+  "files": [
+    "src",
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opper-devkit/opper-js-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/opper-devkit/opper-js-sdk/issues"
+  },
+  "homepage": "https://github.com/opper-devkit/opper-js-sdk",
+  "keywords": [
+    "opper",
+    "opper-sdk"
+  ],
+  "scripts": {
+    "dev": "tsup --watch",
+    "build": "tsup",
+    "publish:dev": "yalc publish ."
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@ngify/types": "^1.5.2",
+    "@opper/core": "0.4.2"
+  },
+  "peerDependencies": {
+    "@capacitor-community/bluetooth-le": "^6.0.0",
+    "rxjs": "^7.8.1"
+  }
+}
