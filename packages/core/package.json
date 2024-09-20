@@ -44,7 +44,6 @@
     "@ngify/types": "^1.5.2"
   },
   "peerDependencies": {
-    "miniprogram-api-typings": "^3.10.0",
     "rxjs": "^7.8.1"
   }
 }

@@ -265,8 +265,7 @@ export class Opper {
         // TODO 247 to constant
         device.setMtu(247).pipe(
           catchError(() => of(null)), // 仅部分安卓支持 setMTU，所以这里失败也没关系
-          switchMap(() => device.notifyCharacteristicValueChange({
-            state: true,
+          switchMap(() => device.startNotifications({
             serviceId: ADVERTIS_SERVICE_UUID,
             characteristicId: NOTIFY_CHARACTERISTIC_UUID
           })),

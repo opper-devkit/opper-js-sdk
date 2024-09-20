@@ -1,6 +1,7 @@
-import { PickProperty } from '@ngify/types';
+import { AnyObject, SafeAny } from '@ngify/types';
 import { Observable, concatAll, filter, from, last, map, shareReplay, switchMap, take } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
+import { BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, BluetoothLowEnergeService } from './typing';
 import { arrayBufferToHex, hexToAscii, isArrayBuffer, splitArray, splitArrayBuffer } from './utils';
 import { BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from './uuids';
 
@@ -9,10 +10,10 @@ import { BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from
 const EMPTY_HEX_REGEX = /\x00/g;
 
 export abstract class AbstractBluetoothLowEnergeDevice {
-  abstract readonly characteristicValueChange: Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>
+  abstract readonly characteristicValueChange: Observable<BluetoothLowEnergeCharacteristicValue>
   abstract readonly connectedChange: Observable<boolean>;
   abstract readonly rssiChange: Observable<number>
-  abstract readonly services: Observable<WechatMiniprogram.BLEService[]>;
+  abstract readonly services: Observable<BluetoothLowEnergeService[]>;
   /** 设备名 */
   abstract readonly name: Observable<string>;
 
@@ -35,18 +36,20 @@ export abstract class AbstractBluetoothLowEnergeDevice {
     public readonly id: string
   ) { }
 
-  abstract connect(options?: Omit<PickProperty<WechatMiniprogram.CreateBLEConnectionOption>, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
+  abstract connect(options?: AnyObject): Observable<SafeAny>
 
   abstract disconnect(): Observable<boolean>;
 
-  abstract getCharacteristics(options: Omit<PickProperty<WechatMiniprogram.GetBLEDeviceCharacteristicsOption>, 'deviceId'>): Observable<WechatMiniprogram.BLECharacteristic[]>
+  abstract getCharacteristics(options: { serviceId: string } & AnyObject): Observable<BluetoothLowEnergeCharacteristic[]>
 
-  abstract readCharacteristicValue(options: Omit<PickProperty<WechatMiniprogram.ReadBLECharacteristicValueOption>, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
+  abstract readCharacteristicValue(options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>
 
-  abstract setMtu(mtu: number): Observable<WechatMiniprogram.SetBLEMTUSuccessCallbackResult>
-  abstract getMtu(): Observable<WechatMiniprogram.GetBLEMTUSuccessCallbackResult>
-  abstract notifyCharacteristicValueChange(options: Omit<WechatMiniprogram.NotifyBLECharacteristicValueChangeOption, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
-  abstract writeCharacteristicValue(options: Omit<PickProperty<WechatMiniprogram.WriteBLECharacteristicValueOption>, 'deviceId'>): Observable<WechatMiniprogram.BluetoothError>
+  abstract setMtu(mtu: number): Observable<number>
+  abstract getMtu(): Observable<number>
+  abstract startNotifications(options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>;
+  abstract stopNotifications(options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>;
+
+  abstract writeCharacteristicValue(value: ArrayBuffer, options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>
 
   private deviceInfoOf(uuid: BlueToothDeviceInfoCharacteristicUUIDs) {
     return this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID }).pipe(
@@ -71,8 +74,8 @@ export abstract class AbstractBluetoothLowEnergeDevice {
    * @param value
    * @param options
    */
-  writeCharacteristicValueInBatches(value: ArrayLike<number> | ArrayBuffer, options: Omit<PickProperty<WechatMiniprogram.WriteBLECharacteristicValueOption>, 'value' | 'deviceId'>) {
-    // 小程序中 MTU 为 ATT_MTU，包含 Op-Code 和 Attribute Handle 的长度
+  writeCharacteristicValueInBatches(value: ArrayLike<number> | ArrayBuffer, options: { serviceId: string, characteristicId: string } & AnyObject) {
+    // ATT_MTU，包含 Op-Code 和 Attribute Handle 的长度
     // 实际可以传输的数据长度为 MTU - 3，MTU 默认为 23，所以实际可用的长度为 23-3=20
 
     const length = this.mtu - 3;
@@ -82,10 +85,7 @@ export abstract class AbstractBluetoothLowEnergeDevice {
 
     return from(
       buffers.map(value =>
-        this.writeCharacteristicValue({
-          value,
-          ...options
-        })
+        this.writeCharacteristicValue(value, options)
       )
     ).pipe(
       concatAll(),

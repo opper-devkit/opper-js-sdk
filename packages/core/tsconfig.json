@@ -9,9 +9,6 @@
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": "./src",
-    "declaration": true,
-    "types": [
-      "miniprogram-api-typings"
-    ]
+    "declaration": true
   }
 }

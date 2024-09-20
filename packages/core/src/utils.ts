@@ -66,9 +66,8 @@ export function parseAttributeCommand(cmd: string): AttributeCommand {
   };
 }
 
-export function isOpperDevice(device: WechatMiniprogram.BlueToothDevice) {
-  // 优先使用 name，因为 localName 是在客户端上可修改的，不可信
-  return OPPER_NAME_PATTERN.test(device.name);
+export function isOpperDevice(device: { name?: string }) {
+  return device.name && OPPER_NAME_PATTERN.test(device.name);
 }
 
 /**
