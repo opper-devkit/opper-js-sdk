@@ -8,10 +8,11 @@ Opper SDK for JavaScript/TypeScript.
 
 ## Packages
 
-| Package                                                                               | Intro      | Version                                                                                                      |
-| ------------------------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------ |
-| [`@opper/core`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/core) | opper core | [![version](https://img.shields.io/npm/v/@opper/core/latest.svg)](https://www.npmjs.com/package/@opper/core) |
-| [`@opper/wx`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/wx)     | wx adapter | [![version](https://img.shields.io/npm/v/@opper/wx/latest.svg)](https://www.npmjs.com/package/@opper/wx)     |
+| Package                                                                                         | Intro             | Version                                                                                                                |
+| ----------------------------------------------------------------------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [`@opper/core`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/core)           | opper core        | [![version](https://img.shields.io/npm/v/@opper/core/latest.svg)](https://www.npmjs.com/package/@opper/core)           |
+| [`@opper/wx`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/wx)               | wx adapter        | [![version](https://img.shields.io/npm/v/@opper/wx/latest.svg)](https://www.npmjs.com/package/@opper/wx)               |
+| [`@opper/capacitor`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/capacitor) | capacitor adapter | [![version](https://img.shields.io/npm/v/@opper/capacitor/latest.svg)](https://www.npmjs.com/package/@opper/capacitor) |
 
 &nbsp; ☝️ Click the links above to view the README for each package.
 
