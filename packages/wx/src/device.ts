@@ -105,21 +105,26 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
 
   setMtu(mtu: number) {
     return defer(() => wx.setBLEMTU({ deviceId: this.id, mtu })).pipe(
-      tap(o => this.mtu = o.mtu)
+      tap(o => this.mtu = o.mtu),
+      map(o => o.mtu)
     );
   }
 
   getMtu() {
-    return defer(() => wx.getBLEMTU({ deviceId: this.id }));
+    return defer(() => wx.getBLEMTU({ deviceId: this.id })).pipe(
+      map(o => o.mtu)
+    );
   }
 
-  /**
-   * 订阅特征值变化
-   * @param options
-   */
-  notifyCharacteristicValueChange(options: Omit<WechatMiniprogram.NotifyBLECharacteristicValueChangeOption, 'deviceId'>) {
+  startNotifications(options: { serviceId: string, characteristicId: string } & AnyObject) {
     return defer(() =>
-      wx.notifyBLECharacteristicValueChange({ deviceId: this.id, ...options })
+      wx.notifyBLECharacteristicValueChange({ deviceId: this.id, serviceId: options.serviceId, characteristicId: options.characteristicId, state: true })
+    );
+  }
+
+  stopNotifications(options: { serviceId: string, characteristicId: string } & AnyObject) {
+    return defer(() =>
+      wx.notifyBLECharacteristicValueChange({ deviceId: this.id, serviceId: options.serviceId, characteristicId: options.characteristicId, state: false })
     );
   }
 
@@ -127,9 +132,9 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
    * 向 BLE 特征值中写入二进制数据。
    * @param options
    */
-  writeCharacteristicValue(options: Omit<PickProperty<WechatMiniprogram.WriteBLECharacteristicValueOption>, 'deviceId'>) {
+  writeCharacteristicValue(value: ArrayBuffer, options: { serviceId: string, characteristicId: string } & AnyObject) {
     return defer(() =>
-      wx.writeBLECharacteristicValue({ deviceId: this.id, ...options })
+      wx.writeBLECharacteristicValue({ deviceId: this.id, value: value, ...options })
     );
   }
 
