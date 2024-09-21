@@ -1,28 +1,22 @@
 import { PickProperty } from '@ngify/types';
-import { AbstractBluetoothLowEnergeDevice, DEFAULT_MTU } from '@opper/core';
-import { Observable, defer, filter, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
+import { AbstractBluetoothLowEnergeDevice, BluetoothLowEnergeCharacteristicValue, DEFAULT_MTU } from '@opper/core';
+import { Observable, defer, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
-  readonly characteristicValueChange = new Observable<WechatMiniprogram.OnBLECharacteristicValueChangeListenerResult>(observer => {
-    // 微信BUG：Android 下 onBLECharacteristicValueChange 只能同时存在一个，添加新的会覆盖旧的；iOS 却能同时存在多个
-    wx.onBLECharacteristicValueChange(result => observer.next(result));
-
-    return () => wx.offBLECharacteristicValueChange();
+  readonly characteristicValueChange = new Observable<BluetoothLowEnergeCharacteristicValue>(observer => {
+    wx.onBLECharacteristicValueChange(result => result.deviceId === this.id && observer.next(result));
   }).pipe(
-    filter(o => o.deviceId === this.id),
     share()
   );
 
   /** 连接状态变更 */
-  readonly connectedChange = new Observable<WechatMiniprogram.OnBLEConnectionStateChangeListenerResult>(observer => {
-    const next: WechatMiniprogram.OnBLEConnectionStateChangeCallback = result => observer.next(result);
+  readonly connectedChange = new Observable<boolean>(observer => {
+    const next: WechatMiniprogram.OnBLEConnectionStateChangeCallback = result => result.deviceId === this.id && observer.next(result.connected);
 
     wx.onBLEConnectionStateChange(next);
 
     return () => wx.offBLEConnectionStateChange(next);
   }).pipe(
-    filter(o => o.deviceId === this.id),
-    map(o => o.connected),
     share()
   );
 
