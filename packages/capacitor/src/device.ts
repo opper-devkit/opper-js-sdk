@@ -1,7 +1,7 @@
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { AnyObject, SafeAny } from '@ngify/types';
 import { AbstractBluetoothLowEnergeDevice, BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, DEFAULT_MTU } from '@opper/core';
-import { Observable, Subject, defer, map, of, shareReplay, switchMap, tap, throwError, timer } from 'rxjs';
+import { Observable, Subject, defer, map, shareReplay, switchMap, tap, throwError, timer } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   characteristicValueChange = new Subject<BluetoothLowEnergeCharacteristicValue>();
@@ -16,8 +16,10 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     shareReplay({ bufferSize: 1, refCount: true })
   );
 
-  // TODO
-  name: Observable<string> = of('TODO');
+  name = this.services.pipe(
+    switchMap(services => BleClient.getConnectedDevices(services.map(o => o.uuid))),
+    map(devices => devices.find(device => device.deviceId === this.id)?.name || ''),
+  );
 
   private reset() {
     this.mtu = DEFAULT_MTU;
@@ -49,6 +51,7 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
 
   setMtu(_mtu: number): Observable<number> {
     // @capacitor-community/bluetooth-le not supported
+    // https://github.com/capacitor-community/bluetooth-le/issues/541
     return throwError(() => { });
   }
 
