@@ -1,5 +1,5 @@
 import { AnyObject, SafeAny } from '@ngify/types';
-import { Observable, concatAll, defer, filter, from, last, map, shareReplay, switchMap, take } from 'rxjs';
+import { Observable, combineLatest, concatAll, defer, filter, from, last, map, shareReplay, switchMap, take } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, BluetoothLowEnergeService } from './typing';
 import { arrayBufferToHex, hexToAscii, isArrayBuffer, splitArray, splitArrayBuffer } from './utils';
@@ -53,11 +53,14 @@ export abstract class AbstractBluetoothLowEnergeDevice {
 
   private deviceInfoOf(uuid: BlueToothDeviceInfoCharacteristicUUIDs) {
     return defer(() => this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID })).pipe(
-      switchMap(() => this.readCharacteristicValue({
-        serviceId: DEVICE_INFO_SERVICE_UUID,
-        characteristicId: uuid
-      })),
-      switchMap(() => this.characteristicValueChange),
+      switchMap(() => combineLatest([
+        this.characteristicValueChange,
+        this.readCharacteristicValue({
+          serviceId: DEVICE_INFO_SERVICE_UUID,
+          characteristicId: uuid
+        })
+      ])),
+      map(([o]) => o),
       filter(o => o.serviceId === DEVICE_INFO_SERVICE_UUID && o.characteristicId === uuid),
       map(({ value }) => {
         const hex = arrayBufferToHex(value);
