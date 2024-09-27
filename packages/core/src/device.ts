@@ -65,7 +65,7 @@ export abstract class AbstractBluetoothLowEnergeDevice {
         return ascii.replace(EMPTY_HEX_REGEX, '');
       }),
       take(1),
-      shareReplay({ bufferSize: 1, refCount: true })
+      shareReplay(1)
     );
   }
 
