@@ -1,3 +1,10 @@
+export interface BluetoothDevice {
+  id: string
+  localName?: string
+  name?: string
+  rssi?: number
+}
+
 export interface BluetoothLowEnergeService {
   uuid: string;
 }

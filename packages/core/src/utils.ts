@@ -1,5 +1,6 @@
 import { Attribute, AttributeCommand } from './attribute';
 import { ATT_ACCURACY_PATTERN, ATT_ACK_PATTERN, ATT_AUTO_CLOSE_PATTERN, ATT_BAT_PATTERN, ATT_CMD_PATTERN, ATT_FILTER_PATTERN, ATT_IDLE_PATTERN, ATT_LOCK_PATTERN, ATT_WGT_PATTERN } from './constants';
+import { BluetoothDevice } from './typing';
 
 const ATTRIBUTE_TOKEN_PREFIX = 'ATT+' as const;
 const OPPER_NAME_PATTERN = /^OPPER-M\d+\s\w{4}$/;
@@ -66,8 +67,8 @@ export function parseAttributeCommand(cmd: string): AttributeCommand {
   };
 }
 
-export function isOpperDevice(device: { name?: string }) {
-  return device.name && OPPER_NAME_PATTERN.test(device.name);
+export function isOpperDevice(device: BluetoothDevice) {
+  return !!(device.name && OPPER_NAME_PATTERN.test(device.name));
 }
 
 /**
