@@ -46,7 +46,15 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   }
 
   readCharacteristicValue(options: { serviceId: string; characteristicId: string; } & AnyObject): Observable<SafeAny> {
-    return defer(() => BleClient.read(this.id, options.serviceId, options.characteristicId));
+    return defer(() => BleClient.read(this.id, options.serviceId, options.characteristicId)).pipe(
+      tap(value => {
+        this.characteristicValueChange.next({
+          serviceId: options.serviceId,
+          characteristicId: options.characteristicId,
+          value: value.buffer
+        });
+      })
+    );
   }
 
   setMtu(_mtu: number): Observable<number> {
