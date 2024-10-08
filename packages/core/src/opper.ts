@@ -215,6 +215,7 @@ export class Opper {
 
     return device.connect().pipe(
       catchError(error => {
+        // TODO: 这是小程序的逻辑，不应该写到 core 包
         switch (error.errCode) {
           case -1: // already connect
             return of(null);
