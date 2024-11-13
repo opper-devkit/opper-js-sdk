@@ -1,5 +1,5 @@
 import { BleClient } from '@capacitor-community/bluetooth-le';
-import { AnyObject, SafeAny } from '@ngify/types';
+import { AnyObject, SafeAny } from '@ngify/core';
 import { AbstractBluetoothLowEnergeDevice, BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, DEFAULT_MTU } from '@opper/core';
 import { Observable, Subject, defer, map, shareReplay, switchMap, tap, throwError, timer } from 'rxjs';
 

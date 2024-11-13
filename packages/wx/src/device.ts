@@ -1,4 +1,4 @@
-import { PickProperty } from '@ngify/types';
+import { PickProperty } from '@ngify/core';
 import { AbstractBluetoothLowEnergeDevice, BluetoothLowEnergeCharacteristicValue, DEFAULT_MTU } from '@opper/core';
 import { Observable, defer, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
 

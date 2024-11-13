@@ -1,4 +1,4 @@
-import { PickProperty } from '@ngify/types';
+import { PickProperty } from '@ngify/core';
 import { defer, map, Observable, share } from 'rxjs';
 
 export class BluetoothService {

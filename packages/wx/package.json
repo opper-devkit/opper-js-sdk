@@ -41,7 +41,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@ngify/types": "^1.5.2",
+    "@ngify/core": "^2.0.0",
     "@opper/core": "0.5.3"
   },
   "peerDependencies": {

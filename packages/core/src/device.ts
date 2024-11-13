@@ -1,4 +1,4 @@
-import { AnyObject, SafeAny } from '@ngify/types';
+import { AnyObject, SafeAny } from '@ngify/core';
 import { Observable, combineLatest, concatAll, defer, filter, from, last, map, shareReplay, switchMap, take } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, BluetoothLowEnergeService } from './typing';
