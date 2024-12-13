@@ -147,7 +147,7 @@ export function isArrayBuffer(value: unknown): value is ArrayBuffer {
  * @returns 一个 Uint8Array。
  */
 export function stringToUint8Array(str: string) {
-  let arr = [] as number[];
+  const arr = [] as number[];
   for (let i = 0; i < str.length; i++) {
     arr.push(str.charCodeAt(i));
   }
