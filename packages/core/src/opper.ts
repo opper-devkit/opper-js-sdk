@@ -1,4 +1,4 @@
-import { BehaviorSubject, Subject, TimeoutError, bufferCount, catchError, defer, filter, from, map, merge, of, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, throwError, timeout } from 'rxjs';
+import { BehaviorSubject, Subject, TimeoutError, bufferCount, catchError, defer, filter, from, map, merge, of, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, timeout } from 'rxjs';
 import { Attribute } from './attribute';
 import { config } from './config';
 import { AbstractBluetoothLowEnergeDevice } from './device';
@@ -214,21 +214,6 @@ export class Opper {
     });
 
     return device.connect().pipe(
-      catchError(error => {
-        // TODO: 这是小程序的逻辑，不应该写到 core 包
-        switch (error.errCode) {
-          case -1: // already connect
-            return of(null);
-
-          case 10003: // connection fail
-            return device.disconnect().pipe( // 即使连接失败，也需要主动断开
-              switchMap(() => throwError(() => error)),
-              catchError(() => throwError(() => error)),
-            );
-        }
-
-        throw error;
-      }),
       // 在 iOS 中，使用 getDeviceCharacteristics 之前必须先调用 getDeviceServices，否则会失败
       switchMap(() => device.services),
       tap(() => this.connected.next(true)), // 在获取到服务之后，才算真正连接成功
