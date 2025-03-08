@@ -10,16 +10,31 @@ Opper SDK for JavaScript/TypeScript.
 
 | Package                                                                                         | Intro             | Version                                                                                                                |
 | ----------------------------------------------------------------------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| [`@opper/core`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/core)           | opper core        | [![version](https://img.shields.io/npm/v/@opper/core/latest.svg)](https://www.npmjs.com/package/@opper/core)           |
-| [`@opper/wx`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/wx)               | wx adapter        | [![version](https://img.shields.io/npm/v/@opper/wx/latest.svg)](https://www.npmjs.com/package/@opper/wx)               |
-| [`@opper/capacitor`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/capacitor) | capacitor adapter | [![version](https://img.shields.io/npm/v/@opper/capacitor/latest.svg)](https://www.npmjs.com/package/@opper/capacitor) |
+| [`@opper/core`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/core)           | Opper core        | [![version](https://img.shields.io/npm/v/@opper/core/latest.svg)](https://www.npmjs.com/package/@opper/core)           |
+| [`@opper/wx`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/wx)               | WeChat adapter    | [![version](https://img.shields.io/npm/v/@opper/wx/latest.svg)](https://www.npmjs.com/package/@opper/wx)               |
+| [`@opper/capacitor`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/capacitor) | Capacitor adapter | [![version](https://img.shields.io/npm/v/@opper/capacitor/latest.svg)](https://www.npmjs.com/package/@opper/capacitor) |
 
 &nbsp; ☝️ Click the links above to view the README for each package.
 
 ## Prerequisites
 
-- WeChat miniprogram Low Energy [Bluetooth](https://developers.weixin.qq.com/miniprogram/dev/framework/device/bluetooth.html) related technologies.
+- [Bluetooth Low Energy](https://wikipedia.org/wiki/Bluetooth_Low_Energy).
 - [RxJS](https://rxjs.dev/guide/overview) Observable techniques and operators.
+
+## Install
+
+Choose the Opper adapter that's right for your needs.
+
+```bash
+npm install @opper/core
+# If you're developing a WeChat app
+npm install @opper/wx
+# If you're developing a Capacitor app
+npm install @opper/capacitor
+```
+
+If you're developing a [Uni-app](https://uniapp.dcloud.io), or [Taro](https://docs.taro.zone) app, we don't currently provide an official adapter package.
+But you can refer to [`@opper/wx`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/wx) for your own implementation, and feel free to contribute PR ：）
 
 ## API
 
@@ -34,7 +49,7 @@ import { finalize, map, switchMap } from 'rxjs';
 
 const bluetoothService = new BluetoothService();
 
-// 搜寻蓝牙设备
+// Search for low-power Bluetooth devices
 bluetoothService.openAdapter().pipe(
   switchMap(() =>
     bluetoothService.startDevicesDiscovery({
@@ -47,19 +62,23 @@ bluetoothService.openAdapter().pipe(
     bluetoothService.stopDevicesDiscovery().subscribe();
   })
 ).subscribe(devices => {
-  // 自行收集搜寻到的设备
+  // Self-collection of searched equipment
 });
 
-// 创建一个 opper
+// Create an Opper instance
 const opper = new Opper();
-// 创建一个 BLE 设备
+// Create a BLE device
 const device = new BluetoothLowEnergeDevice('deviceId');
-// 连接设备
+// Connect to the device
 opper.connect(device).subscribe();
 
-// 订阅称重值
-opper.weightChange.subscribe(/** callback */);
-// 订阅电量
-opper.batteryChange.subscribe(/** callback */);
+// Subscribe to weight changes
+opper.weightChange.subscribe(weight => {
+  console.log(`New weight: ${weight}`);
+});
+// Subscribe to battery level and status changes
+opper.batteryChange.subscribe(([battery, status]) => {
+  console.log(`New battery level: ${battery}, Status: ${status}`);
+});
 // ...
 ```
