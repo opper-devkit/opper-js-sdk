@@ -1,6 +1,6 @@
 import { PickProperty } from '@ngify/core';
 import { AbstractBluetoothLowEnergeDevice, BluetoothLowEnergeCharacteristicValue, DEFAULT_MTU } from '@opper/core';
-import { Observable, defer, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
+import { Observable, catchError, defer, map, of, share, shareReplay, switchMap, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   readonly characteristicValueChange = new Observable<BluetoothLowEnergeCharacteristicValue>(observer => {
@@ -56,6 +56,21 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   connect(options?: Omit<PickProperty<WechatMiniprogram.CreateBLEConnectionOption>, 'deviceId'>) {
     return defer(() =>
       wx.createBLEConnection({ deviceId: this.id, ...options })
+    ).pipe(
+      catchError(error => {
+        switch (error.errCode) {
+          case -1: // already connect
+            return of(null);
+
+          case 10003: // connection fail
+            return this.disconnect().pipe( // 即使连接失败，也需要主动断开
+              catchError(() => { throw error; }),
+              switchMap(() => { throw error; }),
+            );
+        }
+
+        throw error;
+      }),
     );
   }
 
