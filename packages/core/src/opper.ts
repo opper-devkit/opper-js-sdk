@@ -7,6 +7,7 @@ import { ATTRIBUTE_COMMAND_DELIMITER, arrayBufferToHex, createAttributeCommand, 
 import { ADVERTIS_SERVICE_UUID, NOTIFY_CHARACTERISTIC_UUID, WRITE_CHARACTERISTIC_UUID } from './uuids';
 
 export class Opper {
+  private parser: AttributeCommandParser = new DefaultAttributeCommandParser();
   private readonly destroy$: Subject<void> = new Subject();
 
   private readonly attributeCommandChange = defer(() =>
@@ -58,12 +59,9 @@ export class Opper {
 
   /** 当前连接状态 */
   readonly connected = new BehaviorSubject(false);
-  readonly parser = new BehaviorSubject<AttributeCommandParser>(new DefaultAttributeCommandParser());
 
-  readonly weightChange = this.parser.pipe(
-    switchMap(parser => this.rawWeightChange.pipe(
-      source => parser.weight(source),
-    )),
+  readonly weightChange = this.rawWeightChange.pipe(
+    source => this.parser.weight(source),
     share()
   );
 
@@ -108,8 +106,9 @@ export class Opper {
     share()
   );
 
-  setParser(parser: AttributeCommandParser) {
-    this.parser.next(parser);
+  constructor(options: { parser: AttributeCommandParser }) {
+    this.parser = options.parser;
+
   }
 
   check() {
