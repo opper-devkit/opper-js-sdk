@@ -7,7 +7,7 @@ import { ATTRIBUTE_COMMAND_DELIMITER, arrayBufferToHex, createAttributeCommand, 
 import { ADVERTIS_SERVICE_UUID, NOTIFY_CHARACTERISTIC_UUID, WRITE_CHARACTERISTIC_UUID } from './uuids';
 
 export class Opper {
-  private parser: AttributeCommandParser = new DefaultAttributeCommandParser();
+  private parser: AttributeCommandParser;
   private readonly destroy$: Subject<void> = new Subject();
 
   private readonly attributeCommandChange = defer(() =>
@@ -106,9 +106,8 @@ export class Opper {
     share()
   );
 
-  constructor(options: { parser: AttributeCommandParser }) {
-    this.parser = options.parser;
-
+  constructor(options: { parser?: AttributeCommandParser }) {
+    this.parser = options.parser || new DefaultAttributeCommandParser();
   }
 
   check() {
