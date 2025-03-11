@@ -1,6 +1,5 @@
 export interface BluetoothDevice {
   id: string
-  localName?: string
   name?: string
   rssi?: number
 }
@@ -36,5 +35,5 @@ export interface BluetoothLowEnergeCharacteristicValue {
   /** 蓝牙特征对应服务的 UUID */
   serviceId: string
   /** 特征最新的值 */
-  value: ArrayBuffer
+  value: ArrayBufferLike
 }

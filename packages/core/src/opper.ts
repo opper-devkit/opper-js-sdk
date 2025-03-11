@@ -61,7 +61,7 @@ export class Opper {
   readonly connected = new BehaviorSubject(false);
 
   readonly weightChange = this.rawWeightChange.pipe(
-    source => this.parser.weight(source),
+    source => defer(() => this.parser.weight(source)),
     share()
   );
 
@@ -265,7 +265,7 @@ export class Opper {
   }
 
   disconnect() {
-    return this.device!.disconnect();
+    return this.device?.disconnect();
   }
 
 }

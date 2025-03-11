@@ -67,8 +67,8 @@ export function parseAttributeCommand(cmd: string): AttributeCommand {
   };
 }
 
-export function isOpperDevice(device: BluetoothDevice) {
-  return !!(device.name && OPPER_NAME_PATTERN.test(device.name));
+export function isOpperDevice(device: BluetoothDevice): boolean {
+  return device.name ? OPPER_NAME_PATTERN.test(device.name) : false;
 }
 
 /**
@@ -76,7 +76,7 @@ export function isOpperDevice(device: BluetoothDevice) {
  * @param {ArrayBuffer} buffer - 要转换为十六进制字符串的 ArrayBuffer。
  * @returns 字符串哈希的十六进制表示
  */
-export function arrayBufferToHex(buffer: ArrayBuffer) {
+export function arrayBufferToHex(buffer: ArrayBufferLike) {
   const uint8Array = new Uint8Array(buffer);
   let hex = '';
 
