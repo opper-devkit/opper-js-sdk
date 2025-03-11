@@ -1,6 +1,6 @@
 import { PickProperty } from '@ngify/core';
 import { AbstractBluetoothLowEnergeDevice, BluetoothLowEnergeCharacteristicValue, DEFAULT_MTU } from '@opper/core';
-import { Observable, catchError, defer, map, of, share, shareReplay, switchMap, tap, timer } from 'rxjs';
+import { Observable, catchError, defer, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   readonly characteristicValueChange = new Observable<BluetoothLowEnergeCharacteristicValue>(observer => {
@@ -23,7 +23,8 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   /** Received Signal Strength Indication */
   readonly rssiChange = timer(0, 1000).pipe(
     switchMap(() => wx.getBLEDeviceRSSI({ deviceId: this.id })),
-    map(o => o.RSSI)
+    map(o => o.RSSI),
+    share()
   );
 
   /**
@@ -57,20 +58,12 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     return defer(() =>
       wx.createBLEConnection({ deviceId: this.id, ...options })
     ).pipe(
-      catchError(error => {
-        switch (error.errCode) {
-          case -1: // already connect
-            return of(null);
-
-          case 10003: // connection fail
-            return this.disconnect().pipe( // 即使连接失败，也需要主动断开
-              catchError(() => { throw error; }),
-              switchMap(() => { throw error; }),
-            );
-        }
-
-        throw error;
-      }),
+      catchError(error =>
+        this.disconnect().pipe( // 即使连接失败，也需要主动断开
+          catchError(() => { throw error; }),
+          switchMap(() => { throw error; }),
+        )
+      ),
     );
   }
 
