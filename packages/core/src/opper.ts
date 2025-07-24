@@ -50,15 +50,15 @@ export class Opper {
     share(),
   );
 
-  private readonly rawWeightChange = this.attributeCommandChange.pipe(
-    filter(o => o.attribute === Attribute.Weight),
-    share()
-  );
-
   device?: AbstractBluetoothLowEnergeDevice;
 
   /** 当前连接状态 */
   readonly connected = new BehaviorSubject(false);
+
+  readonly rawWeightChange = this.attributeCommandChange.pipe(
+    filter(o => o.attribute === Attribute.Weight),
+    share()
+  );
 
   readonly weightChange = this.rawWeightChange.pipe(
     source => defer(() => this.parser.weight(source)),
