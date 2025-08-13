@@ -106,8 +106,8 @@ export class Opper {
     share()
   );
 
-  constructor(options: { parser?: AttributeCommandParser }) {
-    this.parser = options.parser || new DefaultAttributeCommandParser();
+  constructor(options?: { parser?: AttributeCommandParser }) {
+    this.parser = options?.parser || new DefaultAttributeCommandParser();
   }
 
   check() {
