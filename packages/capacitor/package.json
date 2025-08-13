@@ -1,6 +1,6 @@
 {
   "name": "@opper/capacitor",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Opper SDK for Capacitor",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@ngify/core": "^2.0.0",
-    "@opper/core": "0.6.0"
+    "@opper/core": "0.6.1"
   },
   "peerDependencies": {
     "@capacitor-community/bluetooth-le": "^6.0.0 || ^7.0.0",
