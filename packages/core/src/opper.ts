@@ -61,7 +61,7 @@ export class Opper {
   );
 
   readonly weightChange = this.rawWeightChange.pipe(
-    source => defer(() => this.parser.weight(source)),
+    source => defer(() => this.parser.weight(source, this)),
     share()
   );
 
