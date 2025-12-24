@@ -2,14 +2,14 @@ import { AnyObject, SafeAny } from '@ngify/core';
 import { Observable, catchError, combineLatest, concatAll, defer, filter, from, last, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, BluetoothLowEnergeService } from './typing';
-import { arrayBufferToHex, hexToAscii, isArrayBuffer, splitArray, splitArrayBuffer } from './utils';
+import { arrayBufferToHex, chunkArray, hexToAscii, isArrayBuffer, splitArrayBuffer } from './utils';
 import { BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from './uuids';
 
 // 空白字符（HEX: 00）
 // eslint-disable-next-line no-control-regex
 const EMPTY_HEX_REGEX = /\x00/g;
 
-export abstract class AbstractBluetoothLowEnergeDevice {
+export abstract class AbstractBluetoothLowEnergeyDevice {
   abstract readonly characteristicValueChange: Observable<BluetoothLowEnergeCharacteristicValue>
   abstract readonly connectedChange: Observable<boolean>;
   abstract readonly rssiChange: Observable<number>
@@ -91,7 +91,7 @@ export abstract class AbstractBluetoothLowEnergeDevice {
     const length = Math.min(this.mtu - 3, 512); // 最大不超过 512 字节
     const buffers = isArrayBuffer(value)
       ? splitArrayBuffer(value, length)
-      : splitArray<number>(value, length).map(arr => new Uint8Array(arr).buffer);
+      : chunkArray<number>(value, length).map(arr => new Uint8Array(arr).buffer);
 
     return from(
       buffers.map(value =>
@@ -124,3 +124,8 @@ export abstract class AbstractBluetoothLowEnergeDevice {
     );
   }
 }
+
+/**
+ * @deprecated Use {@link AbstractBluetoothLowEnergeyDevice} instead.
+ */
+export const AbstractBluetoothLowEnergeDevice = AbstractBluetoothLowEnergeyDevice;

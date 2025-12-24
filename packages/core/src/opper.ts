@@ -1,7 +1,7 @@
 import { BehaviorSubject, Subject, TimeoutError, bufferCount, catchError, defer, filter, from, map, merge, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, timeout } from 'rxjs';
 import { Attribute } from './attribute';
 import { config } from './config';
-import { AbstractBluetoothLowEnergeDevice } from './device';
+import { AbstractBluetoothLowEnergeyDevice } from './device';
 import { AttributeCommandParser, DefaultAttributeCommandParser } from './parser';
 import { ATTRIBUTE_COMMAND_DELIMITER, arrayBufferToHex, createAttributeCommand, hexToAscii, parseAttributeCommand, stringToUint8Array, verifyAttributeCommand } from './utils';
 import { ADVERTIS_SERVICE_UUID, NOTIFY_CHARACTERISTIC_UUID, WRITE_CHARACTERISTIC_UUID } from './uuids';
@@ -50,7 +50,7 @@ export class Opper {
     share(),
   );
 
-  device?: AbstractBluetoothLowEnergeDevice;
+  device?: AbstractBluetoothLowEnergeyDevice;
 
   /** 当前连接状态 */
   readonly connected = new BehaviorSubject(false);
@@ -217,7 +217,7 @@ export class Opper {
     );
   }
 
-  connect(device: AbstractBluetoothLowEnergeDevice) {
+  connect(device: AbstractBluetoothLowEnergeyDevice) {
     this.destroy$.next();
 
     this.device = device;
