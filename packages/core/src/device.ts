@@ -1,5 +1,5 @@
 import { AnyObject, SafeAny } from '@ngify/core';
-import { Observable, combineLatest, concatAll, defer, filter, from, last, map, shareReplay, switchMap, take } from 'rxjs';
+import { Observable, catchError, combineLatest, concatAll, defer, filter, from, last, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, BluetoothLowEnergeService } from './typing';
 import { arrayBufferToHex, hexToAscii, isArrayBuffer, splitArray, splitArrayBuffer } from './utils';
@@ -78,10 +78,17 @@ export abstract class AbstractBluetoothLowEnergeDevice {
    * @param options
    */
   writeCharacteristicValueInBatches(value: ArrayLike<number> | ArrayBuffer, options: { serviceId: string, characteristicId: string } & AnyObject) {
-    // ATT_MTU，包含 Op-Code 和 Attribute Handle 的长度
-    // 实际可以传输的数据长度为 MTU - 3，MTU 默认为 23，所以实际可用的长度为 23-3=20
+    // MTU	报头Header	最大发送量Payload	备注
+    // 23	  3	         20 	            BLE 4.0 默认值
+    // 185	3	         182 	            早期 iOS 常见协商值
+    // 247	3	         244 	            许多 Android 手机与芯片的常用值（对齐 4 字节，效率高）
+    // 517	5	         512 	            行业天花板。单包能传的最长特征值数据。
 
-    const length = this.mtu - 3;
+    // 为什么 517 的 Header 是 5？
+    // Write Request（普通写入）需要报头 3 字节（Opcode + Handle）。
+    // Prepare Write Request（可靠写入）需要多 2 个字节来表示偏移量 Offset。
+
+    const length = Math.min(this.mtu - 3, 512); // 最大不超过 512 字节
     const buffers = isArrayBuffer(value)
       ? splitArrayBuffer(value, length)
       : splitArray<number>(value, length).map(arr => new Uint8Array(arr).buffer);
@@ -93,6 +100,27 @@ export abstract class AbstractBluetoothLowEnergeDevice {
     ).pipe(
       concatAll(),
       last()
+    );
+  }
+
+  exchangeMtu() {
+    // 23： 未协商的默认值
+    // 185：iOS 设备上的常见协商结果
+    // 247：很多外设、部分 Android/嵌入式栈的常见协商结果
+    // 517：Android 侧 API 允许请求到的最大 ATT MTU
+    return this.setMtu(517).pipe(
+      catchError(() => this.setMtu(247)),
+      catchError(() => this.setMtu(185)),
+      // 最后尝试直接使用 getMtu 的值
+      // 因为小程序的 setMtu 最大只支持 512，而部分设备的可协商结果是 517，大于 512 会导致 setMtu 失败
+      // 但 getMtu 是可以获取 517 的
+      catchError(() => this.getMtu().pipe(
+        tap(mtu => this.mtu = mtu)
+      )),
+      catchError(() => {
+        this.mtu = DEFAULT_MTU;
+        return of(DEFAULT_MTU);
+      })
     );
   }
 }

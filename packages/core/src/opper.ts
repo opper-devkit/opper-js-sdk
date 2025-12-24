@@ -246,13 +246,10 @@ export class Opper {
           takeUntil(this.destroy$)
         ).subscribe(value => this.filterChange.next(value));
 
-        // TODO 247 to constant
-        device.setMtu(247).pipe(
-          catchError(() => of(null)), // 仅部分安卓支持 setMTU，所以这里失败也没关系
-          switchMap(() => device.startNotifications({
-            serviceId: ADVERTIS_SERVICE_UUID,
-            characteristicId: NOTIFY_CHARACTERISTIC_UUID
-          })),
+        device.startNotifications({
+          serviceId: ADVERTIS_SERVICE_UUID,
+          characteristicId: NOTIFY_CHARACTERISTIC_UUID
+        }).pipe(
           // 等待接收到 notify 的时候再开始 check
           switchMap(() => device.characteristicValueChange),
           take(1),
