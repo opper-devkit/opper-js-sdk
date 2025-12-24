@@ -108,15 +108,22 @@ export function hexToAscii(hex: string) {
  * @param length - 每个子数组的长度。
  * @returns 分割后的子数组。
  */
-export function splitArray<T>(arr: ArrayLike<T>, length: number) {
-  const tmp: T[][] = [];
+export function chunkArray<T>(arr: ArrayLike<T>, length: number) {
+  const chunks: T[][] = [];
 
-  while (arr.length) {
-    tmp.push(Array.from(arr).slice(0, length));
-    arr = Array.from(arr).slice(length) as ArrayLike<T>;
+  for (let i = 0; i < arr.length; i += length) {
+    const end = Math.min(i + length, arr.length);
+    const chunkLength = end - i;
+    const chunk = new Array<T>(chunkLength);
+
+    for (let j = 0; j < chunkLength; j++) {
+      chunk[j] = arr[i + j] as T;
+    }
+
+    chunks.push(chunk);
   }
 
-  return tmp;
+  return chunks;
 }
 
 /**
