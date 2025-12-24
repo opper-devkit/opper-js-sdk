@@ -8,13 +8,13 @@ export interface AttributeCommandParser {
 }
 
 export class DefaultAttributeCommandParser implements AttributeCommandParser {
-  weight(source: Observable<AttributeCommand>): Observable<number> {
+  weight(source: Observable<AttributeCommand>, _opper: Opper): Observable<number> {
     return source.pipe(
       map(cmd => +cmd.value[0])
     );
   }
 
-  overload(source: Observable<AttributeCommand>): Observable<boolean> {
+  overload(source: Observable<AttributeCommand>, _opper: Opper): Observable<boolean> {
     return source.pipe(
       map(() => false) // TODO
     );
