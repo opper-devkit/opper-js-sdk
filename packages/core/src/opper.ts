@@ -287,7 +287,7 @@ export class Opper {
   private getVersionDate() {
     return this.device!.firmwareRevision.pipe(
       // YX_OPPER-M1-V01(20250801) -> 20250801
-      map(value => +value.match(/\((\d+)\)/g)![1]),
+      map(value => +value.match(/\((\d+)\)/)![1]),
     );
   }
 }
