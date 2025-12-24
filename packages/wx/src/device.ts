@@ -58,6 +58,7 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     return defer(() =>
       wx.createBLEConnection({ deviceId: this.id, ...options })
     ).pipe(
+      switchMap(() => this.exchangeMtu()),
       catchError(error =>
         this.disconnect().pipe( // 即使连接失败，也需要主动断开
           catchError(() => { throw error; }),

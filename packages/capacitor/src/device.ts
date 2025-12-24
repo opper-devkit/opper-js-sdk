@@ -29,7 +29,8 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
     return defer(() =>
       BleClient.connect(this.id, () => this.connectedChange.next(false))
     ).pipe(
-      tap(() => this.connectedChange.next(true))
+      tap(() => this.connectedChange.next(true)),
+      switchMap(() => this.exchangeMtu()),
     );
   }
 
