@@ -44,7 +44,7 @@ For the full API definition, please visit [https://opper-devkit.github.io/opper-
 
 ```ts
 import { isOpperDevice, Opper } from '@opper/core';
-import { BluetoothLowEnergeDevice, BluetoothService } from '@opper/wx';
+import { BluetoothLowEnergeyDevice, BluetoothService } from '@opper/wx';
 import { finalize, map, switchMap } from 'rxjs';
 
 const bluetoothService = new BluetoothService();
@@ -68,7 +68,7 @@ bluetoothService.openAdapter().pipe(
 // Create an Opper instance
 const opper = new Opper();
 // Create a BLE device
-const device = new BluetoothLowEnergeDevice('deviceId');
+const device = new BluetoothLowEnergeyDevice('deviceId');
 // Connect to the device
 opper.connect(device).subscribe();
 
@@ -82,3 +82,10 @@ opper.batteryChange.subscribe(([battery, status]) => {
 });
 // ...
 ```
+
+## Migration
+
+### v0.7.0
+
+- Renamed `AbstractBluetoothLowEnergeDevice` to `AbstractBluetoothLowEnergeyDevice`.
+- Renamed `BluetoothLowEnergeDevice` to `BluetoothLowEnergeyDevice`.
