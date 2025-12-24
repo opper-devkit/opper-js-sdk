@@ -1,17 +1,21 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": [
-    "./src/**/*.ts"
-  ],
-  "exclude": [
-    "./**/*.spec.ts"
-  ],
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "rootDir": "./src",
-    "declaration": true,
-    "types": [
-      "miniprogram-api-typings"
-    ]
-  }
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

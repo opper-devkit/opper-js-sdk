@@ -1,25 +1,9 @@
 {
   "name": "@opper/core",
-  "version": "0.6.2",
-  "description": "Opper SDK for JavaScript/TypeScript.",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "author": "opper",
+  "version": "0.0.0",
+  "description": "Opper SDK core package",
   "license": "MIT",
   "sideEffects": false,
-  "files": [
-    "src",
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/opper-devkit/opper-js-sdk.git"
@@ -28,20 +12,12 @@
     "url": "https://github.com/opper-devkit/opper-js-sdk/issues"
   },
   "homepage": "https://github.com/opper-devkit/opper-js-sdk",
-  "keywords": [
-    "opper",
-    "opper-sdk"
-  ],
-  "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup",
-    "publish:dev": "yalc publish ."
-  },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@ngify/core": "^2.0.0"
+    "@ngify/core": "^2.0.0",
+    "tslib": "^2.3.0"
   },
   "peerDependencies": {
     "rxjs": "^7.8.1"

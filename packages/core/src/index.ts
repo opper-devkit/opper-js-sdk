@@ -1,5 +1,5 @@
 export * from './attribute';
-export { Config, setupConfig } from './config';
+export { setupConfig, type Config } from './config';
 export * from './constants';
 export * from './device';
 export * from './opper';

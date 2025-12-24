@@ -19,6 +19,7 @@ concurrency:
 
 env:
   BUILD_PATH: "."
+  DOCS_SITE_PATH: "./dist/docs"
 
 jobs:
   build:
@@ -39,15 +40,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
         working-directory: ${{ env.BUILD_PATH }}
-      - name: Build
-        run: npm run build
       - name: Build docs
-        run: npm run build:docs
+        run: npm run docs
         working-directory: ${{ env.BUILD_PATH }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.BUILD_PATH }}/docs
+          path: ${{ env.DOCS_SITE_PATH }}
 
   deploy:
     environment:

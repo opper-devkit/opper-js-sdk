@@ -1,0 +1,50 @@
+{
+  "name": "wx",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/wx/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/wx",
+        "main": "packages/wx/src/index.ts",
+        "tsConfig": "packages/wx/tsconfig.lib.json",
+        "assets": [],
+        "generateExportsField": true
+      }
+    },
+    "postbuild": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "commands": [
+          "node scripts/postbuild.js wx"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "reportsDirectory": "../../coverage/wx"
+      }
+    },
+    "release:dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yalc publish dist/wx"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "capacitor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/capacitor/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/capacitor",
+        "main": "packages/capacitor/src/index.ts",
+        "tsConfig": "packages/capacitor/tsconfig.lib.json",
+        "assets": [],
+        "generateExportsField": true
+      }
+    },
+    "postbuild": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "commands": [
+          "node scripts/postbuild.js capacitor"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "reportsDirectory": "../../coverage/capacitor"
+      }
+    },
+    "release:dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yalc publish dist/capacitor"
+        ]
+      }
+    }
+  }
+}

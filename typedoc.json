@@ -1,14 +1,13 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "name": "opper",
-  "out": "docs",
+  "out": "dist/docs",
   "entryPoints": [
     "packages/*"
   ],
   "entryPointStrategy": "packages",
   "exclude": [
-    "dist",
-    "packages/**/*.spec.ts",
+    "**/*.(test|spec|d).ts"
   ],
   "excludeExternals": true,
   "excludeInternal": true,
