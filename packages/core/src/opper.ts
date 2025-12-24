@@ -65,7 +65,7 @@ export class Opper {
     share()
   );
 
-  stableWeightChange(count: number = 1) {
+  stableWeightChange(count = 1) {
     return this.rawWeightChange.pipe(
       bufferCount(count, 1),
       filter(buf => buf.every(cmd => cmd.value[2] === '1')),
@@ -73,7 +73,7 @@ export class Opper {
     );
   }
 
-  unstableWeightChange(count: number = 1) {
+  unstableWeightChange(count = 1) {
     return this.rawWeightChange.pipe(
       bufferCount(count, 1),
       filter(buf => buf.every(cmd => cmd.value[2] === '0')),
