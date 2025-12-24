@@ -1,8 +1,8 @@
 import { PickProperty } from '@ngify/core';
-import { AbstractBluetoothLowEnergeDevice, BluetoothLowEnergeCharacteristicValue, DEFAULT_MTU } from '@opper/core';
+import { AbstractBluetoothLowEnergeyDevice, BluetoothLowEnergeCharacteristicValue, DEFAULT_MTU } from '@opper/core';
 import { Observable, catchError, defer, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
 
-export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
+export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice {
   readonly characteristicValueChange = new Observable<BluetoothLowEnergeCharacteristicValue>(observer => {
     wx.onBLECharacteristicValueChange(result => result.deviceId === this.id && observer.next(result));
   }).pipe(
@@ -139,3 +139,8 @@ export class BluetoothLowEnergeDevice extends AbstractBluetoothLowEnergeDevice {
   }
 
 }
+
+/**
+ * @deprecated Use {@link BluetoothLowEnergeyDevice} instead.
+ */
+export const BluetoothLowEnergeDevice = BluetoothLowEnergeyDevice;
