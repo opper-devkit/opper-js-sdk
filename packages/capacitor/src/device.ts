@@ -1,10 +1,10 @@
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { AnyObject, SafeAny } from '@ngify/core';
-import { AbstractBluetoothLowEnergeyDevice, BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, DEFAULT_MTU } from '@opper/core';
+import { AbstractBluetoothLowEnergeyDevice, BluetoothLowEnergeyCharacteristic, BluetoothLowEnergeyCharacteristicValue, DEFAULT_MTU } from '@opper/core';
 import { Observable, Subject, defer, map, shareReplay, switchMap, tap, throwError, timer } from 'rxjs';
 
 export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice {
-  characteristicValueChange = new Subject<BluetoothLowEnergeCharacteristicValue>();
+  characteristicValueChange = new Subject<BluetoothLowEnergeyCharacteristicValue>();
   connectedChange = new Subject<boolean>();
   rssiChange = timer(0, 1000).pipe(
     switchMap(() => BleClient.readRssi(this.id))
@@ -40,7 +40,7 @@ export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice
     );
   }
 
-  getCharacteristics(options: { serviceId: string; } & AnyObject): Observable<BluetoothLowEnergeCharacteristic[]> {
+  getCharacteristics(options: { serviceId: string; } & AnyObject): Observable<BluetoothLowEnergeyCharacteristic[]> {
     return this.services.pipe(
       map(services => services.find(o => o.uuid === options.serviceId)?.characteristics || [])
     );
@@ -61,6 +61,7 @@ export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice
   setMtu(_mtu: number): Observable<number> {
     // @capacitor-community/bluetooth-le not supported
     // https://github.com/capacitor-community/bluetooth-le/issues/541
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     return throwError(() => { });
   }
 
@@ -87,8 +88,3 @@ export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice
   }
 
 }
-
-/**
- * @deprecated Use {@link BluetoothLowEnergeyDevice} instead.
- */
-export const BluetoothLowEnergeDevice = BluetoothLowEnergeyDevice;

@@ -4,17 +4,17 @@ export interface BluetoothDevice {
   rssi?: number
 }
 
-export interface BluetoothLowEnergeService {
+export interface BluetoothLowEnergeyService {
   uuid: string;
 }
 
-export interface BluetoothLowEnergeCharacteristic {
+export interface BluetoothLowEnergeyCharacteristic {
   uuid: string
   /** 该特征支持的操作类型 */
-  properties: BluetoothLowEnergeCharacteristicProperties;
+  properties: BluetoothLowEnergeyCharacteristicProperties;
 }
 
-export interface BluetoothLowEnergeCharacteristicProperties {
+export interface BluetoothLowEnergeyCharacteristicProperties {
   /** 该特征是否支持 indicate 操作 */
   indicate: boolean
   /** 该特征是否支持 notify 操作 */
@@ -29,7 +29,7 @@ export interface BluetoothLowEnergeCharacteristicProperties {
   writeWithoutResponse?: boolean
 }
 
-export interface BluetoothLowEnergeCharacteristicValue {
+export interface BluetoothLowEnergeyCharacteristicValue {
   /** 蓝牙特征的 UUID */
   characteristicId: string
   /** 蓝牙特征对应服务的 UUID */

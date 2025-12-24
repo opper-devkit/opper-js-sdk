@@ -1,7 +1,7 @@
 import { AnyObject, SafeAny } from '@ngify/core';
 import { Observable, catchError, combineLatest, concatAll, defer, filter, from, last, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
-import { BluetoothLowEnergeCharacteristic, BluetoothLowEnergeCharacteristicValue, BluetoothLowEnergeService } from './typing';
+import { BluetoothLowEnergeyCharacteristic, BluetoothLowEnergeyCharacteristicValue, BluetoothLowEnergeyService } from './typing';
 import { arrayBufferToHex, chunkArray, hexToAscii, isArrayBuffer, splitArrayBuffer } from './utils';
 import { BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from './uuids';
 
@@ -10,10 +10,10 @@ import { BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from
 const EMPTY_HEX_REGEX = /\x00/g;
 
 export abstract class AbstractBluetoothLowEnergeyDevice {
-  abstract readonly characteristicValueChange: Observable<BluetoothLowEnergeCharacteristicValue>
+  abstract readonly characteristicValueChange: Observable<BluetoothLowEnergeyCharacteristicValue>
   abstract readonly connectedChange: Observable<boolean>;
   abstract readonly rssiChange: Observable<number>
-  abstract readonly services: Observable<BluetoothLowEnergeService[]>;
+  abstract readonly services: Observable<BluetoothLowEnergeyService[]>;
   /** 设备名 */
   abstract readonly name: Observable<string>;
 
@@ -40,7 +40,7 @@ export abstract class AbstractBluetoothLowEnergeyDevice {
 
   abstract disconnect(): Observable<SafeAny>;
 
-  abstract getCharacteristics(options: { serviceId: string } & AnyObject): Observable<BluetoothLowEnergeCharacteristic[]>
+  abstract getCharacteristics(options: { serviceId: string } & AnyObject): Observable<BluetoothLowEnergeyCharacteristic[]>
 
   abstract readCharacteristicValue(options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>
 
@@ -124,8 +124,3 @@ export abstract class AbstractBluetoothLowEnergeyDevice {
     );
   }
 }
-
-/**
- * @deprecated Use {@link AbstractBluetoothLowEnergeyDevice} instead.
- */
-export const AbstractBluetoothLowEnergeDevice = AbstractBluetoothLowEnergeyDevice;

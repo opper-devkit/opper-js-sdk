@@ -87,5 +87,4 @@ opper.batteryChange.subscribe(([battery, status]) => {
 
 ### v0.7.0
 
-- Renamed `AbstractBluetoothLowEnergeDevice` to `AbstractBluetoothLowEnergeyDevice`.
-- Renamed `BluetoothLowEnergeDevice` to `BluetoothLowEnergeyDevice`.
+- Renamed `BluetoothLowEnerge` to `BluetoothLowEnergey`.
