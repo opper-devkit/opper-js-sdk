@@ -1,4 +1,4 @@
-import { BehaviorSubject, Subject, TimeoutError, bufferCount, catchError, defer, filter, from, map, merge, of, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, timeout } from 'rxjs';
+import { BehaviorSubject, Subject, TimeoutError, bufferCount, catchError, defer, filter, from, map, merge, retry, scan, share, shareReplay, switchMap, take, takeUntil, tap, timeout } from 'rxjs';
 import { Attribute } from './attribute';
 import { config } from './config';
 import { AbstractBluetoothLowEnergeDevice } from './device';
@@ -114,21 +114,40 @@ export class Opper {
     return this.emit(Attribute.Check);
   }
 
-  /**
-   * 校准
-   * @param zeroSampleValue 归零时的采样值
-   * @param correctionValue 单位/克
-   * @param correctionSampleValue 校准时的采样值（可选）
-   */
-  calibrate(zeroSampleValue: number, calibrationValue: number, correctionSampleValue?: number) {
-    return this.emit(Attribute.Ref0, zeroSampleValue).pipe(
-      switchMap(() => correctionSampleValue ? of(correctionSampleValue) : this.sampleChange),
-      timeout(3000),
-      take(1),
-      switchMap((value: number) =>
-        this.emit(Attribute.Ref1, [value, calibrationValue])
+  calibrateZero() {
+    return this.getVersionDate().pipe(
+      switchMap(date => date > 20250801
+        ? this.emit(Attribute.Cal, 0)
+        : this.sampleChange.pipe(
+          timeout(3000),
+          take(1),
+          switchMap((value: number) =>
+            this.emit(Attribute.Ref0, value)
+          )
+        )
       )
     );
+  }
+
+  calibrateSpan(gram: number) {
+    return this.getVersionDate().pipe(
+      switchMap(date => date > 20250801
+        ? this.emit(Attribute.Cal, gram).pipe(
+          switchMap(() => this.calibrateDone())
+        )
+        : this.sampleChange.pipe(
+          timeout(3000),
+          take(1),
+          switchMap((value: number) =>
+            this.emit(Attribute.Ref1, [value, gram])
+          )
+        )
+      )
+    );
+  }
+
+  calibrateDone() {
+    return this.emit(Attribute.CalDone);
   }
 
   setIdle(value: number) {
@@ -265,4 +284,10 @@ export class Opper {
     return this.device?.disconnect();
   }
 
+  private getVersionDate() {
+    return this.device!.firmwareRevision.pipe(
+      // YX_OPPER-M1-V01(20250801) -> 20250801
+      map(value => +value.match(/\((\d+)\)/g)![1]),
+    );
+  }
 }

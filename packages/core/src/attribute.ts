@@ -26,6 +26,20 @@ export const enum Attribute {
    * - W：砝码重量，克
    */
   Ref1 = 'REF1',
+  /**
+   * 校准重量
+   *
+   * `ATT+WGT_CAL=[W]`
+   *
+   * - W：重量，克
+   */
+  Cal = 'WGT_CAL',
+  /**
+   * 校准完成
+   *
+   * `ATT+WGT_CAL_DONE`
+   */
+  CalDone = 'WGT_CAL_DONE',
   /** 恢复出厂设置 */
   Factory = 'FACTORY',
   /**
