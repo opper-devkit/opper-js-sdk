@@ -2,8 +2,8 @@ import { AnyObject, SafeAny } from '@ngify/core';
 import { Observable, catchError, combineLatest, concatAll, defer, filter, from, last, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { BluetoothLowEnergeyCharacteristic, BluetoothLowEnergeyCharacteristicValue, BluetoothLowEnergeyService } from './typing';
-import { arrayBufferToHex, chunkArray, hexToAscii, isArrayBuffer, splitArrayBuffer } from './utils';
-import { BlueToothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from './uuids';
+import { arrayBufferToHex, chunkArray, chunkArrayBuffer, hexToAscii, isArrayBuffer } from './utils';
+import { BluetoothDeviceInfoCharacteristicUUIDs, DEVICE_INFO_SERVICE_UUID } from './uuids';
 
 // 空白字符（HEX: 00）
 // eslint-disable-next-line no-control-regex
@@ -18,17 +18,17 @@ export abstract class AbstractBluetoothLowEnergeyDevice {
   abstract readonly name: Observable<string>;
 
   /** 产品型号 */
-  readonly modelNumber = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ModelNumber);
+  readonly modelNumber = this.deviceInfoOf(BluetoothDeviceInfoCharacteristicUUIDs.ModelNumber);
   /** 产品序列号 */
-  readonly serialNumber = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.SerialNumber);
+  readonly serialNumber = this.deviceInfoOf(BluetoothDeviceInfoCharacteristicUUIDs.SerialNumber);
   /** 固件版本 */
-  readonly firmwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.FirmwareRevision);
+  readonly firmwareRevision = this.deviceInfoOf(BluetoothDeviceInfoCharacteristicUUIDs.FirmwareRevision);
   /** 硬件版本 */
-  readonly hardwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.HardwareRevision);
+  readonly hardwareRevision = this.deviceInfoOf(BluetoothDeviceInfoCharacteristicUUIDs.HardwareRevision);
   /** 软件版本 */
-  readonly softwareRevision = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.SoftwareRevision);
+  readonly softwareRevision = this.deviceInfoOf(BluetoothDeviceInfoCharacteristicUUIDs.SoftwareRevision);
   /** 生产商名称 */
-  readonly manufacturerName = this.deviceInfoOf(BlueToothDeviceInfoCharacteristicUUIDs.ManufacturerName);
+  readonly manufacturerName = this.deviceInfoOf(BluetoothDeviceInfoCharacteristicUUIDs.ManufacturerName);
 
   protected mtu: number = DEFAULT_MTU;
 
@@ -51,7 +51,7 @@ export abstract class AbstractBluetoothLowEnergeyDevice {
 
   abstract writeCharacteristicValue(value: ArrayBuffer, options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>
 
-  private deviceInfoOf(uuid: BlueToothDeviceInfoCharacteristicUUIDs) {
+  private deviceInfoOf(uuid: BluetoothDeviceInfoCharacteristicUUIDs) {
     return defer(() => this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID })).pipe(
       switchMap(() => combineLatest([
         this.characteristicValueChange,
@@ -90,7 +90,7 @@ export abstract class AbstractBluetoothLowEnergeyDevice {
 
     const length = Math.min(this.mtu - 3, 512); // 最大不超过 512 字节
     const buffers = isArrayBuffer(value)
-      ? splitArrayBuffer(value, length)
+      ? chunkArrayBuffer(value, length)
       : chunkArray<number>(value, length).map(arr => new Uint8Array(arr).buffer);
 
     return from(

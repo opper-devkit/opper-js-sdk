@@ -17,12 +17,12 @@ export const NOTIFY_CHARACTERISTIC_UUID = '0000FFE4-0000-1000-8000-00805F9B34FB'
  * 通用访问特征
  * @deprecated iOS 不支持
  */
-export const enum BlueToothGenericAccessCharacteristicUUIDs {
+export const enum BluetoothGenericAccessCharacteristicUUIDs {
   /** 设备名 */
   DeviceName = '00002A00-0000-1000-8000-00805F9B34FB'
 }
 
-export const enum BlueToothDeviceInfoCharacteristicUUIDs {
+export const enum BluetoothDeviceInfoCharacteristicUUIDs {
   /** 产品型号特征 */
   ModelNumber = '00002A24-0000-1000-8000-00805F9B34FB',
   /** 序列号特征 */

@@ -133,7 +133,7 @@ export function chunkArray<T>(arr: ArrayLike<T>, length: number) {
  * @param length 子数组的长度。
  * @returns 拆分后的子数组。
  */
-export function splitArrayBuffer(buffer: ArrayBuffer, length: number) {
+export function chunkArrayBuffer(buffer: ArrayBuffer, length: number) {
   const tmp: ArrayBuffer[] = [];
 
   while (buffer.byteLength) {

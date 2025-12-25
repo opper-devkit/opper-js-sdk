@@ -3,13 +3,13 @@ import {
   ATTRIBUTE_COMMAND_DELIMITER,
   arrayBufferToHex,
   chunkArray,
+  chunkArrayBuffer,
   createAttributeCommand,
   createAttributeToken,
   hexToAscii,
   isArrayBuffer,
   isOpperDevice,
   parseAttributeCommand,
-  splitArrayBuffer,
   stringToUint8Array,
   verifyAttributeCommand,
 } from './utils';
@@ -104,7 +104,7 @@ describe('utils', () => {
   describe('splitArrayBuffer', () => {
     it('splits into arraybuffers by length', () => {
       const buf = new Uint8Array([1, 2, 3, 4, 5]).buffer;
-      const parts = splitArrayBuffer(buf, 2);
+      const parts = chunkArrayBuffer(buf, 2);
       expect(parts.map(arrayBufferToHex)).toEqual(['0102', '0304', '05']);
     });
   });
