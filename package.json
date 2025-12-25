@@ -9,7 +9,7 @@
     "test:coverage": "nx run-many --target=test --coverage",
     "lint": "nx run-many --target=lint",
     "affected": "nx affected -t lint test build",
-    "release": "nx release",
+    "release": "export npm_config_legacy_peer_deps=false && nx release",
     "release:dev": "nx run-many --target=release:dev",
     "prepare": "husky"
   },
