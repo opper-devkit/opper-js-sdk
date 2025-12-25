@@ -9,28 +9,15 @@
     "esModuleInterop": true,
     "target": "es2019",
     "module": "esnext",
-    "lib": [
-      "es2022",
-      "dom",
-      "dom.iterable"
-    ],
+    "lib": ["es2022", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@opper/core": [
-        "packages/core/src/index.ts"
-      ],
-      "@opper/wx": [
-        "packages/wx/src/index.ts"
-      ],
-      "@opper/capacitor": [
-        "packages/capacitor/src/index.ts"
-      ],
+      "@opper/capacitor": ["packages/capacitor/src/index.ts"],
+      "@opper/core": ["packages/core/src/index.ts"],
+      "@opper/wx": ["packages/wx/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }
