@@ -1,4 +1,4 @@
-export const enum Attribute {
+export const Attribute = {
   /**
    * 重量
    *
@@ -8,7 +8,7 @@ export const enum Attribute {
    * - S：采样值
    * - N：0表示不稳定，1表示稳定，2表示超重
    */
-  Weight = 'WGT',
+  Weight: 'WGT',
   /**
    * 设置归零的采样值
    *
@@ -16,7 +16,7 @@ export const enum Attribute {
    *
    * - S：采样值
    */
-  Ref0 = 'REF0',
+  Ref0: 'REF0',
   /**
    * 设置校准的采样值
    *
@@ -25,7 +25,7 @@ export const enum Attribute {
    * - S：采样值
    * - W：砝码重量，克
    */
-  Ref1 = 'REF1',
+  Ref1: 'REF1',
   /**
    * 校准重量
    *
@@ -33,15 +33,15 @@ export const enum Attribute {
    *
    * - W：重量，克
    */
-  Cal = 'WGT_CAL',
+  Cal: 'WGT_CAL',
   /**
    * 校准完成
    *
    * `ATT+WGT_CAL_DONE`
    */
-  CalDone = 'WGT_CAL_DONE',
+  CalDone: 'WGT_CAL_DONE',
   /** 恢复出厂设置 */
-  Factory = 'FACTORY',
+  Factory: 'FACTORY',
   /**
    * 确认消息
    *
@@ -49,11 +49,11 @@ export const enum Attribute {
    *
    * - N：0 成功，1 失败，... 其他
    */
-  Acknowledge = 'ACK',
+  Acknowledge: 'ACK',
   /** 检查信息 */
-  Check = 'CHECK',
+  Check: 'CHECK',
   /** 关机 */
-  Close = 'CLOSE',
+  Close: 'CLOSE',
   /**
    * 终端通知上位机低电自动关机
    *
@@ -61,7 +61,7 @@ export const enum Attribute {
    *
    * - T：秒数，表示T秒后自动关机
    */
-  AutoClose = 'AUTO_CLOSE',
+  AutoClose: 'AUTO_CLOSE',
   /**
    * 空闲时间，默认10min
    *
@@ -69,7 +69,7 @@ export const enum Attribute {
    *
    * - T：分钟，闲置T分钟后自动关机
    */
-  Idle = 'IDLE',
+  Idle: 'IDLE',
   /**
    * 电池
    *
@@ -78,7 +78,7 @@ export const enum Attribute {
    * - V：电池电量
    * - S：0表示未充电，1表示充电中
    */
-  Battery = 'BAT',
+  Battery: 'BAT',
   /**
    * 设置分度值，默认1g
    *
@@ -86,7 +86,7 @@ export const enum Attribute {
    *
    * G：克
    */
-  Accuracy = 'ACCURACY',
+  Accuracy: 'ACCURACY',
   /**
    * 稳定波动幅度，默认10g
    *
@@ -94,7 +94,7 @@ export const enum Attribute {
    *
    * G: 克
    */
-  Lock = 'LOCK',
+  Lock: 'LOCK',
   /**
    * 设置滤波器，默认20
    * Hz越大数值变化越快
@@ -108,12 +108,14 @@ export const enum Attribute {
    * 40: 4Hz
    * 80: 8Hz
    */
-  Filter = 'FILTER',
+  Filter: 'FILTER',
   /**
    * 重启设备
    */
-  Reboot = 'RST'
-}
+  Reboot: 'RST'
+} as const;
+
+export type Attribute = (typeof Attribute)[keyof typeof Attribute];
 
 export interface AttributeCommand {
   attribute: Attribute;
