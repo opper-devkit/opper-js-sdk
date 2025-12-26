@@ -40,7 +40,7 @@ export class Opper {
           }
 
           return acc;
-        }),
+        }, ''),
         switchMap(() => from(cmds.splice(0, cmds.length))),
       );
     },
