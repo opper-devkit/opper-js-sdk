@@ -1,5 +1,5 @@
 import { AnyObject, SafeAny } from '@ngify/core';
-import { Observable, catchError, combineLatest, concatAll, defer, filter, from, last, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
+import { Observable, catchError, concatAll, from, last, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { BluetoothLowEnergeyCharacteristic, BluetoothLowEnergeyCharacteristicValue, BluetoothLowEnergeyService } from './typing';
 import { arrayBufferToHex, chunkArray, chunkArrayBuffer, hexToAscii, isArrayBuffer } from './utils';
@@ -42,7 +42,7 @@ export abstract class AbstractBluetoothLowEnergeyDevice {
 
   abstract getCharacteristics(options: { serviceId: string } & AnyObject): Observable<BluetoothLowEnergeyCharacteristic[]>
 
-  abstract readCharacteristicValue(options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>
+  abstract readCharacteristicValue(options: { serviceId: string, characteristicId: string } & AnyObject): Observable<ArrayBufferLike>
 
   abstract setMtu(mtu: number): Observable<number>
   abstract getMtu(): Observable<number>
@@ -52,17 +52,12 @@ export abstract class AbstractBluetoothLowEnergeyDevice {
   abstract writeCharacteristicValue(value: ArrayBuffer, options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>
 
   private deviceInfoOf(uuid: BluetoothDeviceInfoCharacteristicUUIDs) {
-    return defer(() => this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID })).pipe(
-      switchMap(() => combineLatest([
-        this.characteristicValueChange,
-        this.readCharacteristicValue({
-          serviceId: DEVICE_INFO_SERVICE_UUID,
-          characteristicId: uuid
-        })
-      ])),
-      map(([o]) => o),
-      filter(o => o.serviceId === DEVICE_INFO_SERVICE_UUID && o.characteristicId === uuid),
-      map(({ value }) => {
+    return this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID }).pipe(
+      switchMap(() => this.readCharacteristicValue({
+        serviceId: DEVICE_INFO_SERVICE_UUID,
+        characteristicId: uuid
+      })),
+      map(value => {
         const hex = arrayBufferToHex(value);
         const ascii = hexToAscii(hex);
         return ascii.replace(EMPTY_HEX_REGEX, '');

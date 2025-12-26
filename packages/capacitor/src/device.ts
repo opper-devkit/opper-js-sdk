@@ -46,13 +46,14 @@ export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice
     );
   }
 
-  readCharacteristicValue(options: { serviceId: string; characteristicId: string; } & AnyObject): Observable<SafeAny> {
+  readCharacteristicValue(options: { serviceId: string; characteristicId: string; } & AnyObject): Observable<ArrayBufferLike> {
     return defer(() => BleClient.read(this.id, options.serviceId, options.characteristicId)).pipe(
+      map(value => value.buffer),
       tap(value => {
         this.characteristicValueChange.next({
           serviceId: options.serviceId,
           characteristicId: options.characteristicId,
-          value: value.buffer
+          value,
         });
       })
     );

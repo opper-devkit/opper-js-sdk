@@ -1,6 +1,6 @@
 import { PickProperty } from '@ngify/core';
 import { AbstractBluetoothLowEnergeyDevice, BluetoothLowEnergeyCharacteristicValue, DEFAULT_MTU } from '@opper/core';
-import { Observable, catchError, defer, map, share, shareReplay, switchMap, tap, timer } from 'rxjs';
+import { Observable, catchError, defer, filter, map, share, shareReplay, switchMap, take, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice {
   readonly characteristicValueChange = new Observable<BluetoothLowEnergeyCharacteristicValue>(observer => {
@@ -99,9 +99,26 @@ export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice
    * @param options
    */
   readCharacteristicValue(options: Omit<PickProperty<WechatMiniprogram.ReadBLECharacteristicValueOption>, 'deviceId'>) {
-    return defer(() =>
+    return new Observable<ArrayBufferLike>(subscriber => {
+      const { serviceId, characteristicId } = options;
+
+      const sub = this.characteristicValueChange.pipe(
+        filter(o => o.serviceId === serviceId && o.characteristicId === characteristicId),
+        take(1),
+        map(o => o.value)
+      ).subscribe({
+        next: value => {
+          subscriber.next(value);
+          subscriber.complete();
+        },
+        error: err => subscriber.error(err),
+      });
+
       wx.readBLECharacteristicValue({ deviceId: this.id, ...options })
-    );
+        .catch(err => subscriber.error(err));
+
+      return () => sub.unsubscribe();
+    });
   }
 
   setMtu(mtu: number) {
