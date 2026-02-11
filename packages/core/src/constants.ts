@@ -21,3 +21,4 @@ export const ATT_AUTO_CLOSE_PATTERN = /^ATT\+AUTO_CLOSE=\d+$/;
 export const ATT_FILTER_PATTERN = /^ATT\+FILTER=\d+$/;
 
 export const DEFAULT_MTU = 23;
+export const MAX_MTU = 247;
