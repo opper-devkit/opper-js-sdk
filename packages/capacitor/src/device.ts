@@ -1,7 +1,7 @@
 import { BleClient } from '@capacitor-community/bluetooth-le';
 import { AnyObject, SafeAny } from '@ngify/core';
 import { AbstractBluetoothLowEnergeyDevice, BluetoothLowEnergeyCharacteristic, BluetoothLowEnergeyCharacteristicValue, DEFAULT_MTU } from '@opper/core';
-import { Observable, Subject, defer, map, shareReplay, switchMap, tap, throwError, timer } from 'rxjs';
+import { Observable, Subject, defer, delay, map, shareReplay, switchMap, tap, throwError, timer } from 'rxjs';
 
 export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice {
   characteristicValueChange = new Subject<BluetoothLowEnergeyCharacteristicValue>();
@@ -30,6 +30,7 @@ export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice
       BleClient.connect(this.id, () => this.connectedChange.next(false))
     ).pipe(
       tap(() => this.connectedChange.next(true)),
+      delay(1),
       switchMap(() => this.exchangeMtu()),
     );
   }
