@@ -1,3 +1,13 @@
+## 0.7.2 (2026-02-11)
+
+### 🚀 Features
+
+- **core:** use MAX_MTU constant for MTU value limitation ([61f7657](https://github.com/opper-devkit/opper-js-sdk/commit/61f7657))
+
+### ❤️ Thank You
+
+- HyperLife1119 @HyperLife1119
+
 ## 0.7.1 (2026-02-11)
 
 This was a version bump only, there were no code changes.
