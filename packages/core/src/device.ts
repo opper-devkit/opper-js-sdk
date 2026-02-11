@@ -1,5 +1,5 @@
 import { AnyObject, SafeAny } from '@ngify/core';
-import { Observable, catchError, concatAll, from, last, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
+import { Observable, catchError, concatAll, from, last, map, of, shareReplay, switchMap, take } from 'rxjs';
 import { DEFAULT_MTU } from './constants';
 import { BluetoothLowEnergeyCharacteristic, BluetoothLowEnergeyCharacteristicValue, BluetoothLowEnergeyService } from './typing';
 import { arrayBufferToHex, chunkArray, chunkArrayBuffer, hexToAscii, isArrayBuffer } from './utils';
@@ -102,16 +102,15 @@ export abstract class AbstractBluetoothLowEnergeyDevice {
     // 23： 未协商的默认值
     // 185：iOS 设备上的常见协商结果
     // 247：很多外设、部分 Android/嵌入式栈的常见协商结果
-    // 517：Android 侧 API 允许请求到的最大 ATT MTU
-    return this.setMtu(517).pipe(
-      catchError(() => this.setMtu(247)),
+    // 517：Android 侧 API 允许请求到的最大 ATT MTU，可能导致连接不稳定，丢包等问题，暂时不用
+    return this.setMtu(247).pipe(
       catchError(() => this.setMtu(185)),
       // 最后尝试直接使用 getMtu 的值
       // 因为小程序的 setMtu 最大只支持 512，而部分设备的可协商结果是 517，大于 512 会导致 setMtu 失败
       // 但 getMtu 是可以获取 517 的
-      catchError(() => this.getMtu().pipe(
-        tap(mtu => this.mtu = mtu)
-      )),
+      // catchError(() => this.getMtu().pipe(
+      //   tap(mtu => this.mtu = mtu)
+      // )),
       catchError(() => {
         this.mtu = DEFAULT_MTU;
         return of(DEFAULT_MTU);
