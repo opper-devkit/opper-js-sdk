@@ -1,6 +1,6 @@
 import { PickProperty } from '@ngify/core';
 import { AbstractBluetoothLowEnergeyDevice, BluetoothLowEnergeyCharacteristicValue, DEFAULT_MTU } from '@opper/core';
-import { Observable, catchError, defer, filter, map, share, shareReplay, switchMap, take, tap, timer } from 'rxjs';
+import { Observable, catchError, defer, delay, filter, map, share, shareReplay, switchMap, take, tap, timer } from 'rxjs';
 
 export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice {
   readonly characteristicValueChange = new Observable<BluetoothLowEnergeyCharacteristicValue>(observer => {
@@ -58,6 +58,7 @@ export class BluetoothLowEnergeyDevice extends AbstractBluetoothLowEnergeyDevice
     return defer(() =>
       wx.createBLEConnection({ deviceId: this.id, ...options })
     ).pipe(
+      delay(1),
       switchMap(() => this.exchangeMtu()),
       catchError(error =>
         this.disconnect().pipe( // 即使连接失败，也需要主动断开
