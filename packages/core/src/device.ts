@@ -1,5 +1,5 @@
 import { AnyObject, SafeAny } from '@ngify/core';
-import { Observable, catchError, concatAll, from, last, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
+import { Observable, catchError, concatAll, defer, from, last, map, of, shareReplay, switchMap, take, tap } from 'rxjs';
 import { DEFAULT_MTU, MAX_MTU } from './constants';
 import { BluetoothLowEnergeyCharacteristic, BluetoothLowEnergeyCharacteristicValue, BluetoothLowEnergeyService } from './typing';
 import { arrayBufferToHex, chunkArray, chunkArrayBuffer, hexToAscii, isArrayBuffer } from './utils';
@@ -52,7 +52,7 @@ export abstract class AbstractBluetoothLowEnergeyDevice {
   abstract writeCharacteristicValue(value: ArrayBuffer, options: { serviceId: string, characteristicId: string } & AnyObject): Observable<SafeAny>
 
   private deviceInfoOf(uuid: BluetoothDeviceInfoCharacteristicUUIDs) {
-    return this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID }).pipe(
+    return defer(() => this.getCharacteristics({ serviceId: DEVICE_INFO_SERVICE_UUID })).pipe(
       switchMap(() => this.readCharacteristicValue({
         serviceId: DEVICE_INFO_SERVICE_UUID,
         characteristicId: uuid
