@@ -1,3 +1,13 @@
+## 0.7.5 (2026-03-30)
+
+### 🩹 Fixes
+
+- **core:** fix bug ([6a63f28](https://github.com/opper-devkit/opper-js-sdk/commit/6a63f28))
+
+### ❤️ Thank You
+
+- HyperLife1119 @HyperLife1119
+
 ## 0.7.4 (2026-03-27)
 
 This was a version bump only for capacitor to align it with other projects, there were no code changes.
