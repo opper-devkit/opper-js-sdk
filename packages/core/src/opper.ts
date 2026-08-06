@@ -174,6 +174,10 @@ export class Opper {
     );
   }
 
+  resetToZero() {
+    return this.emit(Attribute.Zero);
+  }
+
   shutdown() {
     return this.emit(Attribute.Close);
   }

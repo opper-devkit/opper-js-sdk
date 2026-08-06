@@ -112,7 +112,11 @@ export const Attribute = {
   /**
    * 重启设备
    */
-  Reboot: 'RST'
+  Reboot: 'RST',
+  /**
+   * 归零
+   */
+  Zero: 'ZERO'
 } as const;
 
 export type Attribute = (typeof Attribute)[keyof typeof Attribute];
