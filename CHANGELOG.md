@@ -1,3 +1,18 @@
+## 0.8.0 (2026-08-06)
+
+### 🚀 Features
+
+- **core:** add reset to zero method ([5fb1781](https://github.com/opper-devkit/opper-js-sdk/commit/5fb1781))
+- **uni:** support for uni-app ([4084b07](https://github.com/opper-devkit/opper-js-sdk/commit/4084b07))
+
+### 🩹 Fixes
+
+- **core:** update isOpperDevice function to use a more generic device type ([db1b385](https://github.com/opper-devkit/opper-js-sdk/commit/db1b385))
+
+### ❤️ Thank You
+
+- HyperLife1119 @HyperLife1119
+
 ## 0.7.5 (2026-03-30)
 
 ### 🩹 Fixes
