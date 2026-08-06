@@ -1,0 +1,50 @@
+{
+  "name": "uni",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/uni/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/uni",
+        "main": "packages/uni/src/index.ts",
+        "tsConfig": "packages/uni/tsconfig.lib.json",
+        "assets": [],
+        "generateExportsField": true
+      }
+    },
+    "postbuild": {
+      "executor": "nx:run-commands",
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "commands": [
+          "node scripts/postbuild.js uni"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "reportsDirectory": "../../coverage/uni"
+      }
+    },
+    "release:dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yalc publish dist/uni"
+        ]
+      }
+    }
+  }
+}

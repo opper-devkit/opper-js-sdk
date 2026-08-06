@@ -12,6 +12,7 @@ Opper SDK for JavaScript/TypeScript.
 | ----------------------------------------------------------------------------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | [`@opper/core`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/core)           | Opper core        | [![version](https://img.shields.io/npm/v/@opper/core/latest.svg)](https://www.npmjs.com/package/@opper/core)           |
 | [`@opper/wx`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/wx)               | WeChat adapter    | [![version](https://img.shields.io/npm/v/@opper/wx/latest.svg)](https://www.npmjs.com/package/@opper/wx)               |
+| [`@opper/uni`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/uni)             | Uniapp adapter    | [![version](https://img.shields.io/npm/v/@opper/uni/latest.svg)](https://www.npmjs.com/package/@opper/uni)             |
 | [`@opper/capacitor`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/capacitor) | Capacitor adapter | [![version](https://img.shields.io/npm/v/@opper/capacitor/latest.svg)](https://www.npmjs.com/package/@opper/capacitor) |
 
 &nbsp; ☝️ Click the links above to view the README for each package.
@@ -29,11 +30,13 @@ Choose the Opper adapter that's right for your needs.
 npm install @opper/core
 # If you're developing a WeChat app
 npm install @opper/wx
+# If you're developing a Uni app
+npm install @opper/uni
 # If you're developing a Capacitor app
 npm install @opper/capacitor
 ```
 
-If you're developing a [Uni-app](https://uniapp.dcloud.io), or [Taro](https://docs.taro.zone) app, we don't currently provide an official adapter package.
+If you're developing a [Taro](https://docs.taro.zone) app, we don't currently provide an official adapter package.
 But you can refer to [`@opper/wx`](https://github.com/opper-devkit/opper-js-sdk/tree/main/packages/wx) for your own implementation, and feel free to contribute PR ：）
 
 ## API
@@ -62,13 +65,13 @@ bluetoothService.openAdapter().pipe(
     bluetoothService.stopDevicesDiscovery().subscribe();
   })
 ).subscribe(devices => {
-  // Self-collection of searched equipment
+  // Collect scanned devices
 });
 
 // Create an Opper instance
 const opper = new Opper();
 // Create a BLE device
-const device = new BluetoothLowEnergeyDevice('deviceId');
+const device = new BluetoothLowEnergeyDevice('DEVICE_ID');
 // Connect to the device
 opper.connect(device).subscribe();
 
@@ -76,10 +79,27 @@ opper.connect(device).subscribe();
 opper.weightChange.subscribe(weight => {
   console.log(`New weight: ${weight}`);
 });
+
+// Subscribe to stable weight changes
+opper.stableWeightChange().subscribe(weight => {
+  console.log(`New Stable weight: ${weight}`);
+});
+
+// Subscribe to 3 consecutive stable weights
+opper.stableWeightChange(3).subscribe(weight => {
+  console.log(`New Stable weight: ${weight}`);
+});
+
 // Subscribe to battery level and status changes
 opper.batteryChange.subscribe(([battery, status]) => {
   console.log(`New battery level: ${battery}, Status: ${status}`);
 });
+
+// Power off the opper
+opper.shutdown().subscribe();
+
+// Disconnect
+opper.disconnect().subscribe();
 // ...
 ```
 
