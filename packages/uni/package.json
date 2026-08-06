@@ -1,7 +1,7 @@
 {
   "name": "@opper/uni",
   "version": "0.0.0",
-  "description": "Opper SDK for uni-app.",
+  "description": "Opper SDK for uni-app",
   "license": "MIT",
   "sideEffects": false,
   "repository": {
@@ -21,7 +21,7 @@
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
-    "@dcloudio/types": "^3.4.8",
+    "@dcloudio/types": "^3.0.0",
     "rxjs": "^7.8.1"
   }
 }

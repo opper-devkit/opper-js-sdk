@@ -14,7 +14,7 @@ export default [
             '{projectRoot}/vite.config.{js,ts,mjs,mts}',
           ],
           ignoredDependencies: [
-            'miniprogram-api-typings'
+            '@dcloudio/types'
           ]
         },
       ],
