@@ -1,10 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "production": [
       "default",
       "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
@@ -24,40 +21,24 @@
         "typecheckTargetName": "typecheck"
       }
     },
-    {
-      "plugin": "@nx/eslint/plugin",
-      "options": {
-        "targetName": "lint"
-      }
-    }
+    { "plugin": "@nx/eslint/plugin", "options": { "targetName": "lint" } }
   ],
   "targetDefaults": {
     "@nx/js:tsc": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     },
-    "nx-release-publish": {
-      "options": {
-        "packageRoot": "dist/{projectName}"
-      }
-    }
+    "nx-release-publish": { "options": { "packageRoot": "dist/{projectName}" } }
   },
   "release": {
-    "changelog": {
-      "workspaceChangelog": true,
-      "projectChangelogs": true
-    },
+    "changelog": { "workspaceChangelog": true, "projectChangelogs": true },
     "version": {
       "generatorOptions": {
         "packageRoot": "dist/{projectName}",
         "currentVersionResolver": "git-tag"
       }
     }
-  }
+  },
+  "nxCloudId": "694bcd234810f7d1f343372c"
 }
